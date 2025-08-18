@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship, Mapped
 from events.models import Event
 
 
-class BottleFeedEvent(Base):
+class FeedBottleEvent(Base):
     """Event for bottle feeding."""
 
     __tablename__ = "bottle_feed_events"
@@ -17,7 +17,7 @@ class BottleFeedEvent(Base):
     event: Mapped[Event] = relationship("Event")
 
 
-class BreastFeedEvent(Base):
+class FeedBreastEvent(Base):
     """Event for breastfeeding."""
 
     __tablename__ = "breast_feed_events"

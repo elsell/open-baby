@@ -29,7 +29,7 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src.persistence.database import Base  # noqa: E402
-from src.events.feed.models import BottleFeedEvent, BreastFeedEvent  # noqa: F401, E402
+from src.events.feed.models import FeedBottleEvent, FeedBreastEvent  # noqa: F401, E402
 
 target_metadata = Base.metadata
 
