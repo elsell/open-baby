@@ -2,6 +2,7 @@
 
 from abc import ABC
 from sqlalchemy.orm import Session
+from structlog import get_logger
 
 
 class CommonService(ABC):
@@ -15,3 +16,4 @@ class CommonService(ABC):
             db (Session): SQLAlchemy database session.
         """
         self._db = db
+        self._log = get_logger()
