@@ -9,7 +9,8 @@ services:
       - ENVIRONMENT=dev
     networks:
       - backend_network
-
+    volumes:
+      - ./src/backend/src:/app/src
 networks:
     backend_network:
         name: backend_network

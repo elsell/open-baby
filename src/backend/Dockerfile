@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app/venv ./venv
 
 # Copy the application code
-COPY src .
+COPY src ./src
 
 USER root
 # Set the entrypoint
