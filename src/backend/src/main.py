@@ -1,9 +1,6 @@
-from fastapi import Depends, FastAPI
-from persistence.dependencies import get_db
+from fastapi import FastAPI
+from events.router import router as events_router
 
 app = FastAPI()
 
-
-@app.get("/", dependencies=[Depends(get_db)])
-def read_root():
-    return {"Hello": "World"}
+app.include_router(events_router, prefix="/events", tags=["events"])
