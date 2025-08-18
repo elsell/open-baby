@@ -7,6 +7,12 @@ from alembic import context
 
 from src.config import config as app_config
 
+import sys
+from os.path import abspath
+
+# Add the project's root directory to the Python path
+sys.path.insert(0, abspath("../backend/src"))
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
@@ -22,7 +28,10 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+from src.persistence.database import Base  # noqa: E402
+from src.events.feed.models import BottleFeedEvent, BreastFeedEvent  # noqa: F401, E402
+
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

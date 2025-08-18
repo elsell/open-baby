@@ -11,6 +11,7 @@ services:
       - backend_network
     volumes:
       - ./src/backend/src:/app/src
+      - ./src/backend/test.db:/app/test.db:rw
 networks:
     backend_network:
         name: backend_network

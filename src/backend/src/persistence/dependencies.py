@@ -21,7 +21,6 @@ Example:
     ```
 """
 
-import logging
 from typing import Generator
 
 
@@ -29,7 +28,9 @@ from sqlalchemy.orm import Session
 
 from persistence.database import SessionLocal, SessionLocalReadonly
 
-log = logging.getLogger(__name__)
+from structlog import get_logger
+
+log = get_logger()
 
 
 def get_db() -> Generator[Session, None, None]:

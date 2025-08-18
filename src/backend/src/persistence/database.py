@@ -21,7 +21,7 @@ Example Usage:
 ```
 """
 
-import logging
+from structlog import get_logger
 from typing import Tuple
 
 from sqlalchemy import create_engine
@@ -29,7 +29,7 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 from config import config
 
-log = logging.getLogger(__name__)
+log = get_logger()
 
 Base = declarative_base()
 
@@ -49,7 +49,7 @@ class DatabaseConfig:
         """
         database_url = config.database_url
 
-        log.info(f"Creating database connection: {database_url}")
+        log.info("Creating database connection", conn_str=database_url)
 
         self.database_url = database_url
 
