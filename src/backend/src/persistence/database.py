@@ -3,7 +3,7 @@
 Example Usage:
 
 ```python
-    from growlinkcommon.persistence.sql.database import SessionLocal, SessionLocalReadonly
+    from persistence.database import SessionLocal, SessionLocalReadonly
 
     def get_db():
         db = SessionLocal()

@@ -1,8 +1,9 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
+from persistence.dependencies import get_db
 
 app = FastAPI()
 
 
-@app.get("/")
+@app.get("/", dependencies=[Depends(get_db)])
 def read_root():
     return {"Hello": "World"}
