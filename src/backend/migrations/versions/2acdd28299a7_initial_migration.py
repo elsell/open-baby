@@ -27,8 +27,8 @@ def upgrade() -> None:
         sa.Column("id", sa.String(), nullable=False),
         sa.Column("name", sa.String(), nullable=True),
         sa.Column("description", sa.String(), nullable=True),
-        sa.Column("time_start", sa.DateTime(), nullable=False),
-        sa.Column("time_end", sa.DateTime(), nullable=True),
+        sa.Column("time_start", sa.DateTime(timezone=True), nullable=False),
+        sa.Column("time_end", sa.DateTime(timezone=True), nullable=True),
         sa.Column("notes", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
