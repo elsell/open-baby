@@ -48,3 +48,9 @@ class FeedService(CommonService):
         return self._persistence.update_bottle_feed_event(
             event_id=event_id, event=event
         )
+
+    def delete_bottle_feed_event(self, event_id: str) -> None:
+        """Delete a bottle feed event by its ID."""
+        self._log.debug("Deleting bottle feed event", event_id=event_id)
+
+        self._persistence.delete_bottle_feed_event(event_id=event_id)

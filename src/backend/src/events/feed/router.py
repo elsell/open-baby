@@ -32,3 +32,11 @@ def update_bottle_feed_event(
     """Update an existing bottle feed event."""
     service = FeedService(db=db)
     return service.update_bottle_feed_event(event_id=event_id, event=event)
+
+
+@router.delete("/bottle/{event_id}")
+def delete_bottle_feed_event(event_id: str, db: Session = Depends(get_db)):
+    """Delete a bottle feed event by its ID."""
+    service = FeedService(db=db)
+    service.delete_bottle_feed_event(event_id=event_id)
+    return {"message": "Bottle feed event deleted successfully."}
