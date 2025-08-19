@@ -1,3 +1,4 @@
+from typing import Sequence
 from common.service import CommonService
 from sqlalchemy.orm import Session
 from events.feed.model_schema_translation import FeedModelSchemaTranslation
@@ -39,6 +40,14 @@ class FeedService(CommonService):
 
         return self._persistence.get_bottle_feed_event(event_id=event_id)
 
+    def list_bottle_feed_events(
+        self, limit: int = 100, offset: int = 0
+    ) -> Sequence[schemas.FeedBottleEvent]:
+        """List bottle feed events with pagination."""
+        self._log.debug("Listing bottle feed events", limit=limit, offset=offset)
+
+        return self._persistence.list_bottle_feed_events(limit=limit, offset=offset)
+
     def update_bottle_feed_event(
         self, event_id: str, event: schemas.FeedBottleEvent
     ) -> schemas.FeedBottleEvent:
@@ -72,6 +81,14 @@ class FeedService(CommonService):
         self._log.debug("Retrieving breast feed event", event_id=event_id)
 
         return self._persistence.get_breast_feed_event(event_id=event_id)
+
+    def list_breast_feed_events(
+        self, limit: int = 100, offset: int = 0
+    ) -> Sequence[schemas.FeedBreastEvent]:
+        """List breast feed events with pagination."""
+        self._log.debug("Listing breast feed events", limit=limit, offset=offset)
+
+        return self._persistence.list_breast_feed_events(limit=limit, offset=offset)
 
     def update_breast_feed_event(
         self, event_id: str, event: schemas.FeedBreastEvent

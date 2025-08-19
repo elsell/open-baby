@@ -1,6 +1,7 @@
 """Router for feed-related events."""
 
 from fastapi import APIRouter, Depends
+from typing import Sequence
 from sqlalchemy.orm import Session
 from events.feed.service import FeedService
 from events.feed import schemas
@@ -23,6 +24,15 @@ def get_bottle_feed_event(event_id: str, db: Session = Depends(get_db)):
     """Retrieve a bottle feed event by its ID."""
     service = FeedService(db=db)
     return service.get_bottle_feed_event(event_id=event_id)
+
+
+@router.get("/bottle", response_model=Sequence[schemas.FeedBottleEvent])
+def list_bottle_feed_events(
+    limit: int = 100, offset: int = 0, db: Session = Depends(get_db)
+):
+    """List bottle feed events with pagination."""
+    service = FeedService(db=db)
+    return service.list_bottle_feed_events(limit=limit, offset=offset)
 
 
 @router.put("/bottle/{event_id}", response_model=schemas.FeedBottleEvent)
@@ -56,6 +66,15 @@ def get_breast_feed_event(event_id: str, db: Session = Depends(get_db)):
     """Retrieve a breast feed event by its ID."""
     service = FeedService(db=db)
     return service.get_breast_feed_event(event_id=event_id)
+
+
+@router.get("/breast", response_model=Sequence[schemas.FeedBreastEvent])
+def list_breast_feed_events(
+    limit: int = 100, offset: int = 0, db: Session = Depends(get_db)
+):
+    """List breast feed events with pagination."""
+    service = FeedService(db=db)
+    return service.list_breast_feed_events(limit=limit, offset=offset)
 
 
 @router.put("/breast/{event_id}", response_model=schemas.FeedBreastEvent)

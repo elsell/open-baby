@@ -1,3 +1,4 @@
+from typing import Sequence
 from sqlalchemy.orm import Session
 from structlog import get_logger
 from events.feed.model_schema_translation import FeedModelSchemaTranslation
@@ -54,6 +55,32 @@ class FeedPersistence:
         self._log.debug("Bottle feed event retrieved successfully", model=model)
 
         return self._translation.bottle_feed_model_to_schema(model=model)
+
+    def list_bottle_feed_events(
+        self, limit: int = 100, offset: int = 0
+    ) -> Sequence[schemas.FeedBottleEvent]:
+        """List bottle feed events with pagination."""
+        self._log.debug("Listing bottle feed events", limit=limit, offset=offset)
+
+        models_list = (
+            self._db.query(models.FeedBottleEvent)
+            .order_by(models.FeedBottleEvent.time_start.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+
+        if not models_list:
+            self._log.info("No bottle feed events found")
+            return []
+        self._log.debug(
+            "Bottle feed events listed successfully", count=len(models_list)
+        )
+
+        return [
+            self._translation.bottle_feed_model_to_schema(model=model)
+            for model in models_list
+        ]
 
     def update_bottle_feed_event(
         self, event_id: str, event: schemas.FeedBottleEvent
@@ -163,6 +190,32 @@ class FeedPersistence:
         self._log.debug("Breast feed event retrieved successfully", model=model)
 
         return self._translation.breast_feed_model_to_schema(model=model)
+
+    def list_breast_feed_events(
+        self, limit: int = 100, offset: int = 0
+    ) -> Sequence[schemas.FeedBreastEvent]:
+        """List breast feed events with pagination."""
+        self._log.debug("Listing breast feed events", limit=limit, offset=offset)
+
+        models_list = (
+            self._db.query(models.FeedBreastEvent)
+            .order_by(models.FeedBreastEvent.time_start.desc())
+            .offset(offset)
+            .limit(limit)
+            .all()
+        )
+
+        if not models_list:
+            self._log.info("No breast feed events found")
+            return []
+        self._log.debug(
+            "Breast feed events listed successfully", count=len(models_list)
+        )
+
+        return [
+            self._translation.breast_feed_model_to_schema(model=model)
+            for model in models_list
+        ]
 
     def update_breast_feed_event(
         self, event_id: str, event: schemas.FeedBreastEvent
