@@ -32,3 +32,19 @@ class FeedService(CommonService):
         inserted_event = self._persistence.insert_bottle_feed_event(event=event)
 
         return inserted_event
+
+    def get_bottle_feed_event(self, event_id: str) -> schemas.FeedBottleEvent:
+        """Retrieve a bottle feed event by its ID."""
+        self._log.debug("Retrieving bottle feed event", event_id=event_id)
+
+        return self._persistence.get_bottle_feed_event(event_id=event_id)
+
+    def update_bottle_feed_event(
+        self, event_id: str, event: schemas.FeedBottleEvent
+    ) -> schemas.FeedBottleEvent:
+        """Update an existing bottle feed event."""
+        self._log.debug("Updating bottle feed event", event_id=event_id, evt=event)
+
+        return self._persistence.update_bottle_feed_event(
+            event_id=event_id, event=event
+        )
