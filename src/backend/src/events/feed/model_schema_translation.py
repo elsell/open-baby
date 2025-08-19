@@ -16,7 +16,9 @@ class FeedModelSchemaTranslation:
             id=model.id,
             description=model.description,
             time_start=model.time_start.replace(tzinfo=datetime.UTC),
-            time_end=model.time_end.replace(tzinfo=datetime.UTC),
+            time_end=model.time_end.replace(tzinfo=datetime.UTC)
+            if model.time_end
+            else None,
             notes=model.notes,
             amount_ml=model.amount_ml,
             is_formula=model.is_formula,
@@ -49,7 +51,9 @@ class FeedModelSchemaTranslation:
             id=model.id,
             description=model.description,
             time_start=model.time_start.replace(tzinfo=datetime.UTC),
-            time_end=model.time_end.replace(tzinfo=datetime.UTC),
+            time_end=model.time_end.replace(tzinfo=datetime.UTC)
+            if model.time_end
+            else None,
             notes=model.notes,
             side=schemas.BreastSide(model.side),
         )
