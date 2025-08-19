@@ -1,9 +1,9 @@
 <template>
   <UButton class="h-full w-full cursor-pointer" style="text-transform: capitalize;" @click="$emit('click')">
-      <div class="w-full h-full flex flex-col items-center justify-center gap-3 text-5xl">
-        <UIcon class="text-9xl" :name="icon"/>
-        <span class="opacity-80">{{ name }}</span>
-      </div>
+    <div class="w-full h-full flex flex-col items-center justify-center gap-3 text-5xl">
+      <UIcon class="text-8xl md:text-9xl" :name="icon" />
+      <span class="opacity-80">{{ name }}</span>
+    </div>
   </UButton>
 </template>
 
