@@ -1,8 +1,7 @@
-from typing import Literal
-
 from pydantic import Field
 from events.schemas import Event
 from enum import Enum
+from events.schemas import EventType
 
 
 class BreastSide(str, Enum):
@@ -16,7 +15,7 @@ class BreastSide(str, Enum):
 class FeedBottleEvent(Event):
     """Event for bottle feeding."""
 
-    name: Literal["feed_bottle"] = Field(default="feed_bottle", frozen=True)
+    name: EventType = Field(default=EventType.FEED_BOTTLE, frozen=True)
     description: str = Field(default="Bottle feeding event", frozen=True)
 
     amount_ml: int
@@ -26,7 +25,7 @@ class FeedBottleEvent(Event):
 class FeedBreastEvent(Event):
     """Event for breastfeeding."""
 
-    name: Literal["feed_breast"] = Field(default="feed_breast", frozen=True)
+    name: EventType = Field(default=EventType.FEED_BREAST, frozen=True)
     description: str = Field(default="Breastfeeding event", frozen=True)
 
     side: BreastSide = BreastSide.BOTH

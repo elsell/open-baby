@@ -1,5 +1,8 @@
+from events.schemas import EventType
 from persistence.database import Base
-from sqlalchemy import Column, String, DateTime
+from datetime import datetime
+from sqlalchemy import DateTime, Enum
+from sqlalchemy.orm import Mapped, mapped_column
 
 
 class Event(Base):
@@ -7,12 +10,19 @@ class Event(Base):
 
     __tablename__ = "events"
 
-    id = Column(String, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String, index=True)
-    time_start = Column(DateTime, nullable=False)
-    time_end = Column(DateTime, nullable=True)
-    notes = Column(String, nullable=True)
+    id: Mapped[str] = mapped_column(primary_key=True, index=True)
+    name: Mapped[EventType] = mapped_column(Enum(EventType), index=True)
+    description: Mapped[str] = mapped_column(index=True)
+    time_start: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
+    time_end: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=True)
+    notes: Mapped[str] = mapped_column(nullable=True)
+
+    __mapper_args__ = {
+        "polymorphic_on": name,
+        "polymorphic_identity": EventType.__base__,
+    }
 
     def __repr__(self):
         return f"<Event(id={self.id}, name={self.name}, time_start={self.time_start})>"

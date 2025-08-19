@@ -1,7 +1,6 @@
 """Translation of model schemas for feed events."""
 
 from events.feed import schemas, models
-from events.model_schema_translation import EventModelSchemaTranslation
 import datetime
 
 
@@ -14,13 +13,13 @@ class FeedModelSchemaTranslation:
     ) -> schemas.FeedBottleEvent:
         """Convert BottleFeedEvent model to FeedBottleEvent schema."""
         return schemas.FeedBottleEvent(
-            id=str(model.id),
-            description=str(model.event.description),
-            time_start=model.event.time_start.replace(tzinfo=datetime.UTC),  # type: ignore
-            time_end=model.event.time_end.replace(tzinfo=datetime.UTC),  # type: ignore
-            notes=str(model.event.notes),
-            amount_ml=int(model.amount_ml),  # type: ignore
-            is_formula=bool(model.is_formula),
+            id=model.id,
+            description=model.description,
+            time_start=model.time_start.replace(tzinfo=datetime.UTC),
+            time_end=model.time_end.replace(tzinfo=datetime.UTC),
+            notes=model.notes,
+            amount_ml=model.amount_ml,
+            is_formula=model.is_formula,
         )
 
     @staticmethod
@@ -29,10 +28,15 @@ class FeedModelSchemaTranslation:
     ) -> models.FeedBottleEvent:
         """Convert FeedBottleEvent schema to BottleFeedEvent model."""
         return models.FeedBottleEvent(
-            id=str(schema.id),
-            amount_ml=str(schema.amount_ml),
+            id=schema.id,
+            description=schema.description,
+            time_start=schema.time_start.replace(tzinfo=datetime.UTC),
+            time_end=schema.time_end.replace(tzinfo=datetime.UTC)
+            if schema.time_end
+            else None,
+            notes=schema.notes,
+            amount_ml=schema.amount_ml,
             is_formula=bool(schema.is_formula),
-            event=EventModelSchemaTranslation.event_schema_to_model(schema),
         )
 
     @staticmethod
@@ -40,12 +44,13 @@ class FeedModelSchemaTranslation:
         model: models.FeedBreastEvent,
     ) -> schemas.FeedBreastEvent:
         """Convert BreastFeedEvent model to FeedBreastEvent schema."""
+
         return schemas.FeedBreastEvent(
-            id=str(model.id),
-            description=str(model.event.description),
-            time_start=model.event.time_start.replace(tzinfo=datetime.UTC),  # type: ignore
-            time_end=model.event.time_end.replace(tzinfo=datetime.UTC),  # type: ignore
-            notes=str(model.event.notes),
+            id=model.id,
+            description=model.description,
+            time_start=model.time_start.replace(tzinfo=datetime.UTC),
+            time_end=model.time_end.replace(tzinfo=datetime.UTC),
+            notes=model.notes,
             side=schemas.BreastSide(model.side),
         )
 
@@ -55,7 +60,12 @@ class FeedModelSchemaTranslation:
     ) -> models.FeedBreastEvent:
         """Convert FeedBreastEvent schema to BreastFeedEvent model."""
         return models.FeedBreastEvent(
-            id=str(schema.id),
-            side=str(schema.side),
-            event=EventModelSchemaTranslation.event_schema_to_model(schema),
+            id=schema.id,
+            description=schema.description,
+            time_start=schema.time_start.replace(tzinfo=datetime.UTC),
+            time_end=schema.time_end.replace(tzinfo=datetime.UTC)
+            if schema.time_end
+            else None,
+            notes=schema.notes,
+            side=schema.side,
         )
