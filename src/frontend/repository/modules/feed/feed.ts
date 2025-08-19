@@ -18,6 +18,10 @@ class FeedModule extends HttpFactory<IAPIResource> {
             }
         })
     }
+
+    async deleteEventBottleFeed(eventId: string) {
+        await this.call('DELETE', `/events/feed/bottle/${eventId}` as IAPIResource)
+    }
     
 
 }
