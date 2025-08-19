@@ -6,6 +6,12 @@ export default defineNuxtConfig({
 
   },
 
+  runtimeConfig: {
+    public: {
+      apiBase: "http://localhost:8000"
+    }
+  },
+
   modules: [
     '@nuxt/eslint',
     '@nuxt/fonts',
@@ -14,5 +20,5 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/ui'
   ],
-  css: ['@@/assets/css/main.css']
+  css: ['@/assets/css/main.css']
 })
