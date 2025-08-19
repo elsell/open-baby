@@ -3,6 +3,7 @@ from structlog import get_logger
 from events.feed.model_schema_translation import FeedModelSchemaTranslation
 from events.feed import schemas, models
 from fastapi import HTTPException, status
+from sqlalchemy.orm.attributes import set_attribute
 
 
 class FeedPersistence:
@@ -20,7 +21,6 @@ class FeedPersistence:
         model = self._translation.bottle_feed_schema_to_model(schema=event)
 
         try:
-            self._db.add(model.event)
             self._db.add(model)
 
             self._db.commit()
@@ -61,11 +61,18 @@ class FeedPersistence:
         """Update an existing bottle feed event."""
         self._log.debug("Updating bottle feed event", event_id=event_id, evt=event)
 
-        model = (
-            self._db.query(models.FeedBottleEvent)
-            .filter(models.FeedBottleEvent.id == event_id)
-            .first()
-        )
+        try:
+            model = (
+                self._db.query(models.FeedBottleEvent)
+                .filter(models.FeedBottleEvent.id == event_id)
+                .first()
+            )
+        except LookupError as e:
+            self._log.error("Invalid event type", error=repr(e))
+            raise HTTPException(
+                detail=f"Invalid event type for ID {event_id}",
+                status_code=status.HTTP_400_BAD_REQUEST,
+            )
 
         if not model:
             self._log.error("Bottle feed event not found", event_id=event_id)
@@ -74,11 +81,9 @@ class FeedPersistence:
                 status_code=status.HTTP_404_NOT_FOUND,
             )
 
-        updated_model = self._translation.bottle_feed_schema_to_model(schema=event)
-
-        for key, value in updated_model.__dict__.items():
+        for key, value in event.model_dump().items():
             if key != "id":  # Avoid changing the ID
-                setattr(model, key, value)
+                set_attribute(model, key, value)
 
         try:
             self._db.commit()
