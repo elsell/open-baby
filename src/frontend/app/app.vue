@@ -3,10 +3,12 @@
     <div data-vaul-drawer-wrapper class="h-full">
       <EventList @event="handleEvent" />
 
-      <UDrawer v-model:open="showEventEntryDrawer" should-scale-background set-background-color-on-scale>
+      <UDrawer v-model:open="showEventEntryDrawer" should-scale-background set-background-color-on-scale handle-only
+        @close="eventStore.selectedEventToEdit = undefined">
         <template #content>
-          <div class="h-[50vh]">
-            test
+          <div class="min-h-[50vh] relative flex flex-col p-5">
+            <EventFeedEntryEdit v-if="eventStore.selectedEventToEdit === 'feed'" class="flex-grow"
+              @cancel="eventStore.clearEditState" @submit="showEventEntryDrawer = false" />
           </div>
         </template>
       </UDrawer>
@@ -17,12 +19,20 @@
 <script setup lang="ts">
 import type { Event } from '~~/types/event';
 
+const eventStore = useEventStore()
+
 const showEventEntryDrawer: Ref<boolean> = ref(false)
 
+watch(() => eventStore.selectedEventToEdit, (newVal) => {
+  if (newVal !== undefined) showEventEntryDrawer.value = true
+  else showEventEntryDrawer.value = false
+})
+
+
 function handleEvent(event: Event) {
-  console.log(event)
-  showEventEntryDrawer.value = true
+  eventStore.selectedEventToEdit = event
 }
+
 
 </script>
 
