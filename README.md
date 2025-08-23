@@ -1,10 +1,14 @@
 # Open Baby
 
+> [!WARNING]
+> Open Baby is under active development and cannot be trusted
+> for daily use at this time.
+
 Open Baby is a super simple way to log every day 
 events for your baby. 
 
 Log feeds, diapers, and pumping from a minimal interface
-designed to be used by exhaused parents.
+designed to be used by exhausted parents.
 
 While there are many apps that do just that, Open Baby is intended
 to be a no-frills, open-source, alternative that puts you in complete
