@@ -1,5 +1,6 @@
 from pydantic import BaseModel, AwareDatetime
 from enum import Enum
+from typing import Sequence
 
 
 class EventType(str, Enum):
@@ -18,3 +19,10 @@ class Event(BaseModel):
     time_start: AwareDatetime
     time_end: AwareDatetime | None = None
     notes: str | None = None
+
+
+class EventListResponse(BaseModel):
+    """Response model for a list of events with total count."""
+
+    total: int
+    events: Sequence[Event]
