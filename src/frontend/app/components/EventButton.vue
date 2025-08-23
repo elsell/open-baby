@@ -3,7 +3,7 @@
     <div class="w-full flex flex-col">
 
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 text-5xl">
-        <UIcon class="text-8xl md:text-9xl" :name="icon" />
+        <UIcon class="text-6xl md:text-9xl" :name="icon" />
         <span class="opacity-80">{{ name }}</span>
       </div>
       <div class="flex flex-row items-center justify-center gap-3 opacity-50">
