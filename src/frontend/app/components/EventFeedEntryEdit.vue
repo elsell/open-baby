@@ -101,7 +101,7 @@ const isFormulaItems = ref<RadioGroupItem[]>([
   },
   {
     label: "Breast Milk",
-    icon: "i-mdi-mother-nurse",
+    icon: "i-healthicons-breast-pump",
 
     value: false
   }
