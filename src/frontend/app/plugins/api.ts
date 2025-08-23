@@ -1,26 +1,37 @@
 import { $fetch, type FetchOptions } from 'ofetch';
-import { FeedModule} from '@@/repository/modules/feed/feed'
+import { FeedModule } from '@@/repository/modules/feed/feed'
+import { EventsModule } from '@@/repository/modules/events/events';
 
 interface IApiInstance {
-  feed: FeedModule;
+  events: {
+    events: EventsModule;
+    feed: FeedModule;
+  }
 }
 
 export function apiModule(/*nuxtApp*/) {
   const config = useRuntimeConfig()
 
-  const fetchOptions: Record<string, FetchOptions> = {
+  const fetchOptions: Record<"feed" | "events", FetchOptions> = {
     feed: {
       baseURL: config.public.apiBase
     },
+    events: {
+      baseURL: config.public.apiBase
+    }
   };
 
 
   const feedApiFetcher = $fetch.create(fetchOptions.feed);
+  const eventsApiFetcher = $fetch.create(fetchOptions.events);
 
 
   // An object containing all repositories we need to expose
   const modules: IApiInstance = {
-    feed: new FeedModule(feedApiFetcher, fetchOptions.feed)
+    events: {
+      feed: new FeedModule(feedApiFetcher, fetchOptions.feed),
+      events: new EventsModule(eventsApiFetcher, fetchOptions.events)
+    }
   };
 
   return {

@@ -135,7 +135,7 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
       time_start: timeStart
     }
 
-    await $api.feed.createEventBottleFeed(newBottleFeed)
+    await $api.events.feed.createEventBottleFeed(newBottleFeed)
 
     eventStore.clearEditState()
 

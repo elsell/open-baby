@@ -22,7 +22,7 @@ export const useEventStore = defineStore('eventStore', () => {
   async function getLatestBottleFeedEvent(): Promise<IAPIBottleFeedEvent | undefined> {
     const { $api } = useNuxtApp()
 
-    const latestFeedEvent = await $api.feed.listEventBottleFeed(1, 0)
+    const latestFeedEvent = await $api.events.feed.listEventBottleFeed(1, 0)
 
     if (latestFeedEvent.length === 0) return undefined
 
