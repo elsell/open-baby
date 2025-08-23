@@ -96,13 +96,13 @@ const isFormulaItems = ref<RadioGroupItem[]>([
   {
     label: "Formula",
     icon: "i-mdi-pot-mix",
-
+    // @ts-expect-error Using a boolean here seems to work fine, and matches the API.
     value: true,
   },
   {
     label: "Breast Milk",
     icon: "i-healthicons-breast-pump",
-
+    // @ts-expect-error Using a boolean here seems to work fine, and matches the API.
     value: false
   }
 ])
@@ -112,10 +112,10 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
   isLoading.value = true
 
   try {
-
-
     // Split the "HH:MM" string
     const [hours, minutes] = event.data.time.split(":").map(Number);
+
+    if (!hours) throw new Error("Hours is unexpectedly undefined.")
 
     // Clone the date to avoid mutating original
     const combinedDate = new Date(event.data.date);
@@ -139,6 +139,11 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
 
     eventStore.clearEditState()
 
+    toast.add({
+      title: "Feed Event Logged",
+      color: "success",
+    })
+
   } catch (e) {
 
     console.error("Error creating new bottle feed event", e)
@@ -147,9 +152,7 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
     isLoading.value = false
   }
 
-
 }
-
 </script>
 
 <style></style>
