@@ -5,13 +5,28 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:8000"
-    environment:
-      - ENVIRONMENT=dev
+    env_file:
+      - ./env/backend.env
     networks:
-      - backend_network
+      - open_baby_network
     volumes:
       - ./src/backend/src:/app/src
       - ./src/backend/test.db:/app/test.db:rw
+  frontend:
+    build:
+      context: src/frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./env/frontend.env
+    networks:
+      - open_baby_network
+    depends_on:
+      - backend
+    volumes:
+      - ./src/frontend:/app
+      - /app/node_modules
 networks:
-    backend_network:
-        name: backend_network
+    open_baby_network:
+        name: open_baby_network

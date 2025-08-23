@@ -21,12 +21,43 @@ There is no reason why Open Baby cannot include auth/z in the future. However,
 the author is a new parent themselves and must choose simplicity to minimize
 time to delivery for the initial application.
 
+## Quick Start
+
+The quickest way to get started with Open Baby is using [Docker Compose](https://docs.docker.com/compose/).
+
+### Step 1: Create Configuration Files
+
+Open Baby uses `.env` files for configuration. Create two files within a directory
+called `env` (at the same level as `compose.yaml`):
+
+```bash
+# env/frontend.env
+NUXT_PUBLIC_API_BASE=http://192.168.1.204:8000 # Replace 192.168.1.204 with the IP of the computer running Open Baby.
+```
+
+You must create `backend.env`, but you don't need to include any configuration options.
+Optionally, you can specify to use a development environment configuration:
+```bash
+# env/backend.env
+ENVIRONMENT=dev
+```
+
+### Step 2: Run Open Baby
+
+Assuming that you have [installed Docker Compose](https://docs.docker.com/compose/install/), simply run the following command from the root of the repository:
+
+```bash
+sudo docker compose up
+```
+
+You then can access Open Baby in your web browser at http://localhost:3000!
+
 ## Features
 
 ### Log Feedings
 
 Open Baby supports both bottle and breast feedings, and allows
-tracking the following attributs:
+tracking the following attributes:
 
 - Bottle
     - Feed Start Time

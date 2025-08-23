@@ -190,3 +190,4 @@ pyrightconfig.json
 
 # Default sqlite db
 test.db
+.ignore/
