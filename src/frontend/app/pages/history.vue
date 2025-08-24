@@ -23,7 +23,7 @@
 
 <script lang="ts" setup>
 import type { IAPIEvent, IAPIEventType } from '~~/repository/modules/events/types';
-import { ConfirmDialog } from '#components';
+import { ConfirmDialog, NuxtTime } from '#components';
 import type { TableColumn } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
 const { $api } = useNuxtApp()
@@ -85,7 +85,25 @@ const columns: TableColumn<IAPIEvent>[] = [
   },
   {
     accessorKey: 'time_start',
-    header: 'Time'
+    header: 'Time',
+    cell: ({ row }) => {
+      return h('div', [
+        h(NuxtTime, {
+          datetime: row.getValue('time_start'),
+          relative: true
+        }),
+        h('span', null, ' ('),
+        h(NuxtTime, {
+          datetime: row.getValue('time_start'),
+          hour: '2-digit',
+          minute: '2-digit',
+          day: 'numeric',
+          month: 'short',
+          weekday: 'short'
+        }),
+        h('span', null, ')'),
+      ])
+    }
   },
   {
     id: 'actions',
