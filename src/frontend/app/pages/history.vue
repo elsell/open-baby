@@ -81,7 +81,13 @@ const columns: TableColumn<IAPIEvent>[] = [
   },
   {
     accessorKey: 'name',
-    header: 'Event Type'
+    header: 'Event Type',
+    cell: ({ row }) => {
+      const eventType: IAPIEventType = row.getValue('name')
+      let displayName = eventType.replace(/_/g, ' ')
+      displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1)
+      return h('span', { style: 'text-transform: capitalize;' }, displayName)
+    }
   },
   {
     accessorKey: 'time_start',
@@ -92,16 +98,17 @@ const columns: TableColumn<IAPIEvent>[] = [
           datetime: row.getValue('time_start'),
           relative: true
         }),
-        h('span', null, ' ('),
+        h('br'),
         h(NuxtTime, {
           datetime: row.getValue('time_start'),
           hour: '2-digit',
           minute: '2-digit',
           day: 'numeric',
           month: 'short',
-          weekday: 'short'
+          weekday: 'short',
+          class: 'opacity-50 text-sm'
+
         }),
-        h('span', null, ')'),
       ])
     }
   },
