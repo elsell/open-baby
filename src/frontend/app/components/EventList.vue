@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col items-center justify-between h-full gap-10">
-    <EventButton v-for="e in events" :key="e.name" :name="e.name" :icon="e.icon" @click="handleEventClick(e.name)" />
+    <EventButton v-for="e in events" :key="e.name" :name="e.name" :icon="e.icon" :disabled="e.disabled"
+      @click="handleEventClick(e.name)" />
   </div>
 </template>
 
@@ -21,10 +22,12 @@ const events: Array<{ name: IAPIEventType, icon: string }> = [
   {
     name: 'diaper',
     icon: 'i-mdi-diaper-outline',
+    disabled: true
   },
   {
     name: 'pump',
     icon: 'i-mdi-mother-nurse',
+    disabled: true
   },
 ]
 
