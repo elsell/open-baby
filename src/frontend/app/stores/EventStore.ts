@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
+import type { IAPIEventType } from '~~/repository/modules/events/types'
 import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types'
-import type { Event } from '~~/types/event'
 
 export const useEventStore = defineStore('eventStore', () => {
 
-  const selectedEventToEdit: Ref<Event | undefined> = ref()
+  const selectedEventToEdit: Ref<IAPIEventType | undefined> = ref()
+
+  const selectedBottleFeedEventToEdit: Ref<IAPIBottleFeedEvent | undefined> = ref()
 
   const DEFAULT_FEED_EVENT: IAPIBottleFeedEvent = {
     amount_ml: 60,
@@ -17,6 +19,7 @@ export const useEventStore = defineStore('eventStore', () => {
 
   function clearEditState() {
     selectedEventToEdit.value = undefined
+    selectedBottleFeedEventToEdit.value = undefined
   }
 
   async function getLatestBottleFeedEvent(): Promise<IAPIBottleFeedEvent | undefined> {
@@ -37,5 +40,5 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestEvent
   }
 
-  return { selectedEventToEdit, clearEditState, getLatestBottleFeedEvent, getDefaultBottleFeedEventData }
+  return { selectedEventToEdit, selectedBottleFeedEventToEdit, clearEditState, getLatestBottleFeedEvent, getDefaultBottleFeedEventData }
 })

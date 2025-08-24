@@ -17,11 +17,12 @@
       Are you sure you want to delete this event?
     </ConfirmDialog>
 
+    <EventEditDrawer :is-edit="true" @submit="refresh" />
   </div>
 </template>
 
 <script lang="ts" setup>
-import type { IAPIEvent } from '~~/repository/modules/events/types';
+import type { IAPIEvent, IAPIEventType } from '~~/repository/modules/events/types';
 import { ConfirmDialog } from '#components';
 import type { TableColumn } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
@@ -31,8 +32,9 @@ const events = await $api.events.events.listEvents(10000)
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
+const eventStore = useEventStore()
 
-const { data, status, error, refresh, clear } = await useAsyncData(
+const { data, status, refresh } = await useAsyncData(
   'event-list',
   async () => await $api.events.events.listEvents(10000)
 )
@@ -45,8 +47,16 @@ function getRowItems(row: Row<IAPIEvent>) {
     },
     {
       label: 'Edit',
-      onSelect() {
-        // TODO
+      async onSelect() {
+        const eventType: IAPIEventType = row.getValue('name')
+        const eventId: string = row.getValue('id')
+
+        if (eventType === 'feed_bottle') {
+          const bottleFeedEvent = await $api.events.feed.getEventBottleFeed(eventId)
+          eventStore.selectedBottleFeedEventToEdit = bottleFeedEvent
+        }
+
+        eventStore.selectedEventToEdit = eventType
       }
     },
     {
@@ -54,8 +64,9 @@ function getRowItems(row: Row<IAPIEvent>) {
     },
     {
       label: 'Delete',
-      onSelect() {
-        deleteEvent(row.getValue("id"))
+      async onSelect() {
+        await deleteEvent(row.getValue("id"))
+        await refresh()
       }
     },
 
@@ -134,6 +145,8 @@ async function deleteEvent(eventId?: string, confirm: boolean = false) {
   } finally {
     confirmLoading.value = false
     showDialog.value = false
+    await refresh()
+    eventIdToDelete.value = undefined
   }
 
 }

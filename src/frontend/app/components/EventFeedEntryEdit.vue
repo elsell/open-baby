@@ -16,13 +16,22 @@
       </div>
 
       <!-- Time -->
-      <UFormField name="time">
-        <div class="flex flex-col gap-3">
-          <label class="font-bold">Time</label>
+      <div class="flex flex-row gap-5">
+        <UFormField name="date">
+          <div class="flex flex-col gap-3">
+            <label class="font-bold">Date</label>
 
-          <UInput v-model="state.time" size="xl" type="time" :default-value="state.time" />
-        </div>
-      </UFormField>
+            <UInput v-model="state.date" size="xl" type="date" />
+          </div>
+        </UFormField>
+        <UFormField name="time">
+          <div class="flex flex-col gap-3">
+            <label class="font-bold">Time</label>
+
+            <UInput v-model="state.time" size="xl" type="time" :default-value="state.time" />
+          </div>
+        </UFormField>
+      </div>
 
       <!-- Type -->
       <UFormField name="isFormula">
@@ -47,7 +56,10 @@
         </div>
       </UFormField>
     </div>
-    <UButton size="xl" block type="submit">Log Bottle Feed</UButton>
+    <UButton size="xl" block type="submit">
+      {{ isEdit ? 'Edit Bottle Feed' : 'Log Bottle Feed' }}
+    </UButton>
+    {{ state.date }}
   </UForm>
 </template>
 
@@ -55,13 +67,14 @@
 import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types';
 import * as v from 'valibot'
 import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
-defineEmits<{
+const emit = defineEmits<{
   submit: [],
   cancel: []
 }>()
 
 const props = withDefaults(defineProps<{
   feedEvent?: IAPIBottleFeedEvent
+  isEdit?: boolean
 }>(), {
   feedEvent: undefined
 })
@@ -79,7 +92,7 @@ const startingFeedData: IAPIBottleFeedEvent = props.feedEvent ? props.feedEvent 
 const bottleFeedSchema = v.object({
   amountMl: v.pipe(v.number()),
   time: v.pipe(v.string()),
-  date: v.pipe(v.date()),
+  date: v.pipe(v.string()),
   isFormula: v.pipe(v.boolean())
 })
 
@@ -87,8 +100,12 @@ type BottleFeedSchema = v.InferOutput<typeof bottleFeedSchema>
 
 const state: BottleFeedSchema = reactive({
   amountMl: startingFeedData.amount_ml,
-  date: new Date(),
-  time: dateToLocalTimeString(new Date()),
+  // Extract only the date part from the ISO string
+  // to set as the default value for the date input
+  // If no date is provided, use today's date
+  // in YYYY-MM-DD format
+  date: props.feedEvent ? (new Date(props.feedEvent.time_start)).toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10),
+  time: props.feedEvent ? dateToLocalTimeString(new Date(props.feedEvent.time_start)) : dateToLocalTimeString(new Date()),
   isFormula: startingFeedData.is_formula
 })
 
@@ -129,13 +146,17 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
     const newBottleFeed: IAPIBottleFeedEvent = {
       name: "feed_bottle",
       description: "",
-      id: "",
+      id: props.feedEvent ? props.feedEvent.id : "",
       amount_ml: event.data.amountMl,
       is_formula: event.data.isFormula,
       time_start: timeStart
     }
 
-    await $api.events.feed.createEventBottleFeed(newBottleFeed)
+    if (props.isEdit) {
+      await $api.events.feed.updateEventBottleFeed(newBottleFeed)
+    } else {
+      await $api.events.feed.createEventBottleFeed(newBottleFeed)
+    }
 
     eventStore.clearEditState()
 
@@ -143,6 +164,8 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
       title: "Feed Event Logged",
       color: "success",
     })
+
+    emit('submit')
 
   } catch (e) {
 

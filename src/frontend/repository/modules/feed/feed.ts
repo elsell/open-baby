@@ -6,6 +6,10 @@ class FeedModule extends HttpFactory<IAPIResource> {
         return await this.call<IAPIBottleFeedEvent>('POST', '/events/feed/bottle', event)
     }
 
+    async updateEventBottleFeed(event: IAPIBottleFeedEvent): Promise<IAPIBottleFeedEvent> {
+        return await this.call<IAPIBottleFeedEvent>('PUT', `/events/feed/bottle/${event.id}` as IAPIResource, event)
+    }
+
     async getEventBottleFeed(eventId: string): Promise<IAPIBottleFeedEvent> {
         return await this.call<IAPIBottleFeedEvent>('GET', `/events/feed/bottle/${eventId}` as IAPIResource)
     }
@@ -22,7 +26,7 @@ class FeedModule extends HttpFactory<IAPIResource> {
     async deleteEventBottleFeed(eventId: string) {
         await this.call('DELETE', `/events/feed/bottle/${eventId}` as IAPIResource)
     }
-    
+
 
 }
 
