@@ -5,18 +5,17 @@
 </template>
 
 <script lang="ts" setup>
+import type { IAPIEventType } from '~~/repository/modules/events/types';
 import EventButton from './EventButton.vue';
-import type { Event } from '@@/types/event'
 
 const emit = defineEmits<{
-  event: [Event]
+  event: [IAPIEventType]
 }>()
 
-
 // Top-level events
-const events: Array<{ name: Event, icon: string }> = [
+const events: Array<{ name: IAPIEventType, icon: string }> = [
   {
-    name: 'feed',
+    name: 'feed_bottle',
     icon: 'i-mdi-baby-bottle',
   },
   {
@@ -29,7 +28,7 @@ const events: Array<{ name: Event, icon: string }> = [
   },
 ]
 
-function handleEventClick(event: Event) {
+function handleEventClick(event: IAPIEventType) {
   emit('event', event)
 }
 

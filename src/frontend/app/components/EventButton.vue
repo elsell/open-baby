@@ -34,7 +34,16 @@ defineEmits<{
 
 const eventStore = useEventStore()
 
-const lastEvent: IAPIBottleFeedEvent | undefined = await eventStore.getLatestBottleFeedEvent()
+const lastEvent: Ref<IAPIBottleFeedEvent | undefined> = ref(await eventStore.getLatestBottleFeedEvent())
+
+watch(() => eventStore.selectedEventToEdit, async () => {
+
+  // Refresh the last event when a new event is added
+  const updatedLastEvent = await eventStore.getLatestBottleFeedEvent()
+  if (updatedLastEvent) {
+    lastEvent.value = updatedLastEvent
+  }
+})
 
 </script>
 

@@ -59,7 +59,6 @@
     <UButton size="xl" block type="submit">
       {{ isEdit ? 'Edit Bottle Feed' : 'Log Bottle Feed' }}
     </UButton>
-    {{ state.date }}
   </UForm>
 </template>
 

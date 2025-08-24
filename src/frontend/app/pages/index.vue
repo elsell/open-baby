@@ -7,12 +7,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { Event } from '~~/types/event';
+import type { IAPIEventType } from '~~/repository/modules/events/types';
+
 
 const eventStore = useEventStore()
 
 
-function handleEvent(event: Event) {
+function handleEvent(event: IAPIEventType) {
   eventStore.selectedEventToEdit = event
 }
 </script>
