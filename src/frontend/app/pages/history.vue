@@ -3,14 +3,6 @@
     <UTable :column-visibility="{ id: false }" :data="data?.events" :columns="columns" :loading="status === 'pending'"
       class="flex-1" />
 
-    <span v-for="event in events.events" :key="event.id" class="flex flex-row gap-2 w-full justify-between">
-      {{ event.name }}
-      <NuxtTime :datetime="event.time_start" relative />
-      (
-      <NuxtTime :datetime="event.time_start" hour="2-digit" minute="2-digit" weekday="short" />)
-      <UButton icon="i-ph-trash" color="error" @click="deleteEvent(event.id)" />
-    </span>
-
     <ConfirmDialog :open="showDialog" title="Delete Event" description="This action cannot be undone."
       confirm-text="Delete" cancel-text="Cancel" confirm-color="error" confirm-variant="solid"
       @confirm="deleteEvent(eventIdToDelete, true)" @cancel="handleCancelDelete" :confirm-loading="confirmLoading">
@@ -28,7 +20,6 @@ import type { TableColumn } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
 const { $api } = useNuxtApp()
 
-const events = await $api.events.events.listEvents(10000)
 const UButton = resolveComponent('UButton')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
 
@@ -51,11 +42,13 @@ function getRowItems(row: Row<IAPIEvent>) {
         const eventType: IAPIEventType = row.getValue('name')
         const eventId: string = row.getValue('id')
 
+        // Preload event data for editing
         if (eventType === 'feed_bottle') {
           const bottleFeedEvent = await $api.events.feed.getEventBottleFeed(eventId)
           eventStore.selectedBottleFeedEventToEdit = bottleFeedEvent
         }
 
+        // Open the drawer
         eventStore.selectedEventToEdit = eventType
       }
     },
