@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-1">
-    <UTable :column-visibility="{ id: false }" :data="data?.events" :columns="columns" :loading="status === 'pending'"
-      class="flex-1" />
+    <UTable :column-visibility="{ id: false, metadata: false }" :data="data?.events" :columns="columns"
+      :loading="status === 'pending'" class="flex-1" />
 
     <ConfirmDialog :open="showDialog" title="Delete Event" description="This action cannot be undone."
       confirm-text="Delete" cancel-text="Cancel" confirm-color="error" confirm-variant="solid"
@@ -73,12 +73,25 @@ const columns: TableColumn<IAPIEvent>[] = [
     enableHiding: true
   },
   {
+    accessorKey: 'metadata',
+    header: 'metadata',
+    enableHiding: true
+  },
+  {
     accessorKey: 'name',
     header: 'Event Type',
     cell: ({ row }) => {
       const eventType: IAPIEventType = row.getValue('name')
       let displayName = eventType.replace(/_/g, ' ')
       displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1)
+
+      if (eventType === 'feed_bottle') {
+        displayName = 'Bottle Feed'
+        const metadata = row.getValue('metadata') as Record<string, string | number | boolean>
+
+        return h('div', {}, [h('span', { style: 'text-transform: capitalize;' }, displayName), h('br'), h('span', { class: 'opacity-50 text-sm' }, `${metadata.amount_ml ?? 'N/A'}ml ${metadata.is_formula ? 'Formula' : 'Breastmilk'}`)])
+      }
+
       return h('span', { style: 'text-transform: capitalize;' }, displayName)
     }
   },
