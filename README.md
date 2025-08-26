@@ -36,17 +36,41 @@ called `env` (at the same level as `compose.yaml`):
 
 ```bash
 # env/frontend.env
-NUXT_PUBLIC_API_BASE=http://192.168.1.204:8000 # Replace 192.168.1.204 with the IP of the computer running Open Baby.
+NUXT_PUBLIC_API_BASE=https://192.168.1.204/api # Replace 192.168.1.204 with the IP of the computer running Open Baby.
 ```
 
-You must create `backend.env`, but you don't need to include any configuration options.
+Create `env/backend.env` with, at minimum, CORS allowed origins specified.
 Optionally, you can specify to use a development environment configuration:
 ```bash
 # env/backend.env
+
+# Replace 192.168.1.204 with the IP or domain name of the computer running Open Baby.
+ALLOW_ORIGINS='["https://localhost","https://192.168.1.204"]'
+# (Optional)
 ENVIRONMENT=dev
 ```
 
-### Step 2: Run Open Baby
+### Step 2: Configure TLS Certificates
+
+Open Baby uses Nginx as a reverse proxy to expose the frontend and backend
+services on the same port. It also is configured to support TLS (https://)
+with minimal additional configuration.
+
+This repo contains a script that will guide you through the process
+of creating a self-signed certificate, which will be required to
+run Open Baby.
+
+Simply run:
+```bash
+./scripts/generate_self_signed_cert.sh
+```
+
+The script will interactively guide you through the process
+of creating a self-signed certificate. At the end, it will
+place a `cert.pem` and `key.pem` file in `nginx/` which will
+be used automatically in the next step when the Nginx container is built.
+
+### Step 3: Run Open Baby
 
 Assuming that you have [installed Docker Compose](https://docs.docker.com/compose/install/), simply run the following command from the root of the repository:
 
