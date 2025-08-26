@@ -8,12 +8,14 @@ from events import schemas
 from persistence.dependencies import get_db
 import datetime
 from events.feed.router import router as feed_router
+from events.diaper.router import router as diaper_router
 
 router = APIRouter()
 
 log = structlog.get_logger()
 
 router.include_router(feed_router, prefix="/feed", tags=["feed"])
+router.include_router(diaper_router, prefix="/diaper", tags=["diaper"])
 
 
 @router.post("/", response_model=schemas.Event)
