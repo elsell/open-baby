@@ -1,6 +1,6 @@
 <template>
   <div class="h-full">
-    <UApp>
+    <UApp :toaster="toaster">
       <NuxtLoadingIndicator />
       <NuxtLayout>
         <div class="flex flex-col h-full" data-vaul-drawer-wrapper>
@@ -15,7 +15,9 @@
 </template>
 
 <script setup lang="ts">
+import type { ToasterProps } from '@nuxt/ui';
 
+const toaster: ToasterProps = { position: 'top-center', duration: 2000 };
 </script>
 
 <style>
