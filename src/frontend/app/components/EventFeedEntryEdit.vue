@@ -103,8 +103,8 @@ const state: BottleFeedSchema = reactive({
   // to set as the default value for the date input
   // If no date is provided, use today's date
   // in YYYY-MM-DD format
-  date: props.feedEvent ? new Date(props.feedEvent.time_start).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
-  time: props.feedEvent ? dateToLocalTimeString(new Date(props.feedEvent.time_start)) : dateToLocalTimeString(new Date()),
+  date: (props.feedEvent && props.isEdit) ? new Date(props.feedEvent.time_start).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
+  time: (props.feedEvent && props.isEdit) ? dateToLocalTimeString(new Date(props.feedEvent.time_start)) : dateToLocalTimeString(new Date()),
   isFormula: startingFeedData.is_formula
 })
 
