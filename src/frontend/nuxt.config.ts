@@ -8,9 +8,11 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: "http://192.168.1.204:8000"
+      apiBase: "http://localhost:8000"
     }
   },
+
+  ssr: false,
 
   modules: [
     '@nuxt/eslint',

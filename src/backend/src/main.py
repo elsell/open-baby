@@ -1,20 +1,21 @@
 from fastapi import FastAPI
 from events.router import router as events_router
 from fastapi.middleware.cors import CORSMiddleware
+from config import config
+from structlog import get_logger
 
-app = FastAPI()
+logger = get_logger()
 
+app = FastAPI(root_path=config.root_path)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://192.168.1.204:3000",
-        "http://192.168.1.204:3000/",
-    ],  # TODO: Make this configurable
+    allow_origins=config.allow_origins,
     allow_credentials=True,
     allow_methods=["GET", "PUT", "PATCH", "DELETE", "POST"],  # Allow all methods
     allow_headers=["*"],  # Allow all headers
 )
+
+logger.info("CORS middleware configured", allow_origins=config.allow_origins)
 
 app.include_router(events_router, prefix="/events", tags=["events"])

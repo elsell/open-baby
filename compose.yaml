@@ -3,10 +3,10 @@ services:
     build:
       context: src/backend
       dockerfile: Dockerfile
-    ports:
-      - "8000:8000"
     env_file:
       - ./env/backend.env
+    environment:
+      - ROOT_PATH=/api
     networks:
       - open_baby_network
     volumes:
@@ -16,8 +16,6 @@ services:
     build:
       context: src/frontend
       dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
     env_file:
       - ./env/frontend.env
     networks:
@@ -27,6 +25,18 @@ services:
     volumes:
       - ./src/frontend:/app
       - /app/node_modules
+  nginx:
+    build:
+      context: nginx
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+      - "80:80"
+    networks:
+      - open_baby_network
+    depends_on:
+      - backend
+      - frontend
 networks:
     open_baby_network:
         name: open_baby_network
