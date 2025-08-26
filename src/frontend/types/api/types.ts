@@ -198,7 +198,7 @@ export interface components {
             /** Total */
             total: number;
             /** Events */
-            events: components["schemas"]["Event"][];
+            events: components["schemas"]["EventWithMetadataResponse"][];
         };
         /**
          * EventType
@@ -206,6 +206,31 @@ export interface components {
          * @enum {string}
          */
         EventType: "feed_bottle" | "feed_breast";
+        /**
+         * EventWithMetadataResponse
+         * @description Pydantic model for API responses
+         */
+        EventWithMetadataResponse: {
+            /** Id */
+            id: string;
+            /** Name */
+            name: string;
+            /** Description */
+            description: string;
+            /**
+             * Time Start
+             * Format: date-time
+             */
+            time_start: string;
+            /** Time End */
+            time_end?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /** Metadata */
+            metadata?: {
+                [key: string]: unknown;
+            } | null;
+        };
         /**
          * FeedBottleEvent
          * @description Event for bottle feeding.
