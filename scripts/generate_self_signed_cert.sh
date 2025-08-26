@@ -18,7 +18,7 @@ readonly NC='\033[0m' # No Color
 # Default values
 readonly DEFAULT_DAYS=365
 readonly DEFAULT_BITS=2048
-readonly DEFAULT_OUTPUT_DIR="../nginx"
+readonly DEFAULT_OUTPUT_DIR="./nginx"
 readonly DEFAULT_CERT_NAME="cert.pem"
 readonly DEFAULT_KEY_NAME="key.pem"
 
