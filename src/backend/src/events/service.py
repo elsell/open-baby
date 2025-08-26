@@ -1,4 +1,7 @@
-from typing import Optional
+from typing import Optional, Sequence
+
+from sqlalchemy import inspect
+from events import models
 from common.service import CommonService
 from sqlalchemy.orm import Session
 from events.model_schema_translation import EventModelSchemaTranslation
@@ -39,6 +42,41 @@ class EventService(CommonService):
 
         return self._persistence.get_event(event_id=event_id)
 
+    def _events_to_pydantic_with_metadata(
+        self, events: Sequence[models.Event]
+    ) -> list[schemas.EventWithMetadataResponse]:
+        base_fields = schemas.Event.model_fields.keys()
+
+        result = []
+        for event in events:
+            # Extract base fields
+            base_data = {
+                "id": event.id,
+                "name": event.name,
+                "description": event.description,
+                "time_start": event.time_start.replace(tzinfo=datetime.UTC),
+                "time_end": event.time_end.replace(tzinfo=datetime.UTC)
+                if event.time_end
+                else None,
+                "notes": event.notes,
+            }
+
+            # Extract additional fields
+            metadata = {}
+            mapper = inspect(event.__class__)
+            for column in mapper.columns:
+                if column.key not in base_fields:
+                    value = getattr(event, column.key)
+                    if value is not None:
+                        metadata[column.key] = value
+
+            if metadata:
+                base_data["metadata"] = metadata
+
+            result.append(schemas.EventWithMetadataResponse(**base_data))
+
+        return result
+
     def list_events(
         self,
         limit: int = 100,
@@ -58,6 +96,8 @@ class EventService(CommonService):
         total, events = self._persistence.list_events(
             limit=limit, offset=offset, start_time=start_time, end_time=end_time
         )
+
+        events = self._events_to_pydantic_with_metadata(events=events)
 
         return schemas.EventListResponse(total=total, events=events)
 

@@ -57,8 +57,12 @@ class EventPersistence:
         offset: int = 0,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-    ) -> tuple[int, Sequence[schemas.Event]]:
-        """List events with pagination and time window filtering."""
+    ) -> tuple[int, Sequence[models.Event]]:
+        """List events with pagination and time window filtering.
+
+        Returns raw models, not schemas, so that the caller can handle polymorphism
+        and optionally get the full model details.
+        """
         self._log.debug(
             "Listing events",
             limit=limit,
@@ -89,10 +93,7 @@ class EventPersistence:
             return 0, []
         self._log.debug("Events listed successfully", count=len(models_list))
 
-        return total, [
-            self._translation.event_model_to_schema(model=model)
-            for model in models_list
-        ]
+        return total, models_list
 
     def update_event(self, event_id: str, event: schemas.Event) -> schemas.Event:
         """Update an existing event."""
