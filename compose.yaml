@@ -10,7 +10,7 @@ services:
       - open_baby_network
     volumes:
       - ./src/backend/src:/app/src
-      - ./src/backend/test.db:/app/test.db:rw
+      - ./src/backend/db:/app/db:rw
   backend:
     build:
       context: src/backend
@@ -23,7 +23,7 @@ services:
       - open_baby_network
     volumes:
       - ./src/backend/src:/app/src
-      - ./src/backend/test.db:/app/test.db:rw
+      - ./src/backend/db:/app/db:rw
     depends_on:
       migrations:
         condition: service_completed_successfully

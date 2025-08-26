@@ -11,7 +11,7 @@ class Config(BaseSettings):
     )
 
     # Define your settings here, for example:
-    database_url: str = "sqlite:///./test.db"
+    database_url: str = "sqlite:///./db/db.db"
     debug: bool = False
 
     root_path: str = ""
