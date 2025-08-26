@@ -103,7 +103,7 @@ const state: BottleFeedSchema = reactive({
   // to set as the default value for the date input
   // If no date is provided, use today's date
   // in YYYY-MM-DD format
-  date: props.feedEvent ? (new Date(props.feedEvent.time_start)).toISOString().substring(0, 10) : new Date().toISOString().substring(0, 10),
+  date: props.feedEvent ? new Date(props.feedEvent.time_start).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
   time: props.feedEvent ? dateToLocalTimeString(new Date(props.feedEvent.time_start)) : dateToLocalTimeString(new Date()),
   isFormula: startingFeedData.is_formula
 })
@@ -133,11 +133,24 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
 
     if (!hours) throw new Error("Hours is unexpectedly undefined.")
 
+    /**
+     * Handle the JS Date constructor quirks - if you pass it a date
+     * it will assume it's UTC and convert to local time, which is not what we want.
+     * @param dateString Date string in YYYY-MM-DD format
+     */
+    function parseLocalDate(dateString: string): Date {
+      const [year, month, day] = dateString.split("-").map(Number);
+      // Check for invalid date parts
+      if (!year || !month || !day) throw new Error("Invalid date string");
+      return new Date(year, month - 1, day); // local midnight
+    }
+
     // Clone the date to avoid mutating original
-    const combinedDate = new Date(event.data.date);
+    const combinedDate = parseLocalDate(event.data.date);
 
     // Set the hours/minutes on that date
     combinedDate.setHours(hours, minutes, 0, 0);
+
 
     // Format as ISO string for the API
     const timeStart: string = combinedDate.toISOString();
