@@ -6,7 +6,10 @@ if [ -z "$ENVIRONMENT" ]; then
 fi
 
 # Run the appropriate command
-if [ "$ENVIRONMENT" = "dev" ]; then
+if [ "$1" = "migrate" ]; then
+    echo "Running database migrations"
+    /app/venv/bin/alembic upgrade head
+elif [ "$ENVIRONMENT" = "dev" ]; then
     echo "Running in development mode"
     /app/venv/bin/fastapi dev src/main.py --host 0.0.0.0
 else

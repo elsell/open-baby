@@ -23,6 +23,8 @@ COPY --from=builder /app/venv ./venv
 
 # Copy the application code
 COPY src ./src
+COPY alembic.ini .
+COPY migrations ./migrations
 
 USER root
 # Set the entrypoint

@@ -1,4 +1,16 @@
 services:
+  migrations:
+    build:
+      context: src/backend
+      dockerfile: Dockerfile
+    command: migrate
+    env_file:
+      - ./env/backend.env
+    networks:
+      - open_baby_network
+    volumes:
+      - ./src/backend/src:/app/src
+      - ./src/backend/test.db:/app/test.db:rw
   backend:
     build:
       context: src/backend
@@ -12,6 +24,10 @@ services:
     volumes:
       - ./src/backend/src:/app/src
       - ./src/backend/test.db:/app/test.db:rw
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+
   frontend:
     build:
       context: src/frontend
