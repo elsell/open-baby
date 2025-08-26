@@ -108,6 +108,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/diaper/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Diaper Events
+         * @description List diaper events with pagination.
+         */
+        get: operations["list_diaper_events_events_diaper__get"];
+        put?: never;
+        /**
+         * Create Diaper Event
+         * @description Create a new diaper event.
+         */
+        post: operations["create_diaper_event_events_diaper__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/diaper/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Diaper Event
+         * @description Retrieve a diaper event by its ID.
+         */
+        get: operations["get_diaper_event_events_diaper__event_id__get"];
+        /**
+         * Update Diaper Event
+         * @description Update an existing diaper event.
+         */
+        put: operations["update_diaper_event_events_diaper__event_id__put"];
+        post?: never;
+        /**
+         * Delete Diaper Event
+         * @description Delete a diaper event by its ID.
+         */
+        delete: operations["delete_diaper_event_events_diaper__event_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/": {
         parameters: {
             query?: never;
@@ -171,6 +223,58 @@ export interface components {
          */
         BreastSide: "left" | "right" | "both";
         /**
+         * DiaperContentsColor
+         * @description Colors of diaper poop.
+         * @enum {string}
+         */
+        DiaperContentsColor: "yellow" | "brown" | "green" | "black";
+        /**
+         * DiaperContentsConsistency
+         * @description Consistency of diaper poop.
+         * @enum {string}
+         */
+        DiaperContentsConsistency: "watery" | "pasty";
+        /**
+         * DiaperContentsSize
+         * @description Size of diaper poop.
+         * @enum {string}
+         */
+        DiaperContentsSize: "small" | "medium" | "large";
+        /**
+         * DiaperEvent
+         * @description Event for diaper changes.
+         */
+        DiaperEvent: {
+            /** Id */
+            id: string;
+            /** @default diaper_change */
+            name: components["schemas"]["EventType"];
+            /**
+             * Description
+             * @default Diaper change event
+             */
+            description: string;
+            /**
+             * Time Start
+             * Format: date-time
+             */
+            time_start: string;
+            /** Time End */
+            time_end?: string | null;
+            /** Notes */
+            notes?: string | null;
+            diaper_type: components["schemas"]["DiaperType"];
+            diaper_contents_color?: components["schemas"]["DiaperContentsColor"] | null;
+            diaper_contents_consistency?: components["schemas"]["DiaperContentsConsistency"] | null;
+            diaper_contents_size?: components["schemas"]["DiaperContentsSize"] | null;
+        };
+        /**
+         * DiaperType
+         * @description Types of diaper changes.
+         * @enum {string}
+         */
+        DiaperType: "pee" | "poop" | "both";
+        /**
          * Event
          * @description Base event with shared fields between all baby events.
          */
@@ -205,7 +309,7 @@ export interface components {
          * @description Enum for event types.
          * @enum {string}
          */
-        EventType: "feed_bottle" | "feed_breast";
+        EventType: "feed_bottle" | "feed_breast" | "diaper_change";
         /**
          * EventWithMetadataResponse
          * @description Pydantic model for API responses
@@ -602,6 +706,168 @@ export interface operations {
         };
     };
     delete_breast_feed_event_events_feed_breast__event_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_diaper_events_events_diaper__get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaperEvent"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_diaper_event_events_diaper__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiaperEvent"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaperEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_diaper_event_events_diaper__event_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaperEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_diaper_event_events_diaper__event_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiaperEvent"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaperEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_diaper_event_events_diaper__event_id__delete: {
         parameters: {
             query?: never;
             header?: never;
