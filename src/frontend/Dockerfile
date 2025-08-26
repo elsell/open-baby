@@ -28,12 +28,6 @@ WORKDIR /app
 # Copy built application from builder
 COPY --from=builder /app/.output ./.output
 
-# Copy node_modules from builder
-COPY --from=builder /app/node_modules ./node_modules
-
-# Copy package.json
-COPY --from=builder /app/package.json .
-
 # Expose the port
 EXPOSE 3000
 
