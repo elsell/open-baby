@@ -8,8 +8,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: "http://localhost:8000"
+      apiBase: "https://192.168.1.204/api"
     }
+  },
+
+  telemetry: {
+    enabled: false
   },
 
   ssr: false,

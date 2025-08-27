@@ -1,7 +1,7 @@
 <template>
   <div class="flex flex-col gap-1">
     <UTable :column-visibility="{ id: false, metadata: false }" :data="data?.events" :columns="columns"
-      :loading="status === 'pending'" class="flex-1" />
+      @select="onSelect" :loading="status === 'pending'" class="flex-1" />
 
     <ConfirmDialog :open="showDialog" title="Delete Event" description="This action cannot be undone."
       confirm-text="Delete" cancel-text="Cancel" confirm-color="error" confirm-variant="solid"
@@ -15,8 +15,8 @@
 
 <script lang="ts" setup>
 import type { IAPIEvent, IAPIEventType } from '~~/repository/modules/events/types';
-import { ConfirmDialog, NuxtTime } from '#components';
-import type { TableColumn } from '@nuxt/ui'
+import { ConfirmDialog, NuxtTime, UIcon } from '#components';
+import type { TableColumn, TableRow } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
 const { $api } = useNuxtApp()
 
@@ -29,6 +29,26 @@ const { data, status, refresh } = await useAsyncData(
   'event-list',
   async () => await $api.events.events.listEvents(10000)
 )
+async function onSelect(row: TableRow<IAPIEvent>, e?: Event) {
+  const eventType: IAPIEventType = row.getValue('name')
+  const eventId: string = row.getValue('id')
+
+  eventStore.clearEditState()
+
+  // Preload event data for editing
+  if (eventType === 'feed_bottle') {
+    const bottleFeedEvent = await $api.events.feed.getEventBottleFeed(eventId)
+    eventStore.selectedBottleFeedEventToEdit = bottleFeedEvent
+  }
+  else if (eventType === 'diaper_change') {
+    const diaperChangeEvent = await $api.events.diaper.getEventDiaper(eventId)
+    eventStore.selectedDiaperChangeEventToEdit = diaperChangeEvent
+  }
+
+  // Open the drawer
+  eventStore.selectedEventToEdit = eventType
+}
+
 
 function getRowItems(row: Row<IAPIEvent>) {
   return [
@@ -39,17 +59,7 @@ function getRowItems(row: Row<IAPIEvent>) {
     {
       label: 'Edit',
       async onSelect() {
-        const eventType: IAPIEventType = row.getValue('name')
-        const eventId: string = row.getValue('id')
-
-        // Preload event data for editing
-        if (eventType === 'feed_bottle') {
-          const bottleFeedEvent = await $api.events.feed.getEventBottleFeed(eventId)
-          eventStore.selectedBottleFeedEventToEdit = bottleFeedEvent
-        }
-
-        // Open the drawer
-        eventStore.selectedEventToEdit = eventType
+        onSelect(row)
       }
     },
     {
@@ -89,7 +99,37 @@ const columns: TableColumn<IAPIEvent>[] = [
         displayName = 'Bottle Feed'
         const metadata = row.getValue('metadata') as Record<string, string | number | boolean>
 
-        return h('div', {}, [h('span', { style: 'text-transform: capitalize;' }, displayName), h('br'), h('span', { class: 'opacity-50 text-sm' }, `${metadata.amount_ml ?? 'N/A'}ml ${metadata.is_formula ? 'Formula' : 'Breastmilk'}`)])
+        // Add icon
+        const icon = 'i-mdi-baby-bottle-outline'
+
+
+        return h('div', { style: "display: flex; flex-direction: row; align-items: center; flex-gap: 8px;" }, [
+          h(UIcon, { name: icon, class: 'text-2xl mr-2' }),
+          h('div', [
+            h('span', { style: 'text-transform: capitalize;' }, displayName),
+            h('br'),
+            h('span', { class: 'opacity-50 text-sm' }, `${metadata.amount_ml ?? 'N/A'}ml ${metadata.is_formula ? 'Formula' : 'Breast Milk'}`)
+          ])
+        ])
+      }
+      else if (eventType === 'diaper_change') {
+        const metadata = row.getValue('metadata') as Record<string, string | number | boolean>
+        let contents = ''
+        if (metadata.diaper_contents_size) contents += `${metadata.diaper_contents_size} `
+        if (metadata.diaper_contents_color) contents += `${metadata.diaper_contents_color} `
+        if (metadata.diaper_contents_consistency) contents += `${metadata.diaper_contents_consistency} `
+        if (contents === '') contents = 'No contents logged'
+
+        const icon = "i-mdi-diaper-outline"
+
+        return h('div', { style: "display: flex; flex-direction: row; align-items: center; flex-gap: 8px;" }, [
+          h(UIcon, { name: icon, class: 'text-2xl mr-2' }),
+          h('div', [
+            h('span', { style: 'text-transform: capitalize;' }, displayName),
+            h('br'),
+            h('span', { class: 'opacity-50 text-sm text-transform: capitalize' }, contents)
+          ])
+        ])
       }
 
       return h('span', { style: 'text-transform: capitalize;' }, displayName)

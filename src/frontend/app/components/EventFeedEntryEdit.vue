@@ -161,7 +161,8 @@ async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
       id: props.feedEvent ? props.feedEvent.id : "",
       amount_ml: event.data.amountMl,
       is_formula: event.data.isFormula,
-      time_start: timeStart
+      time_start: timeStart,
+      time_end: timeStart
     }
 
     if (props.isEdit) {

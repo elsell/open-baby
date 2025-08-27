@@ -7,6 +7,9 @@
           <EventFeedEntryEdit v-if="eventStore.selectedEventToEdit === 'feed_bottle'" :is-edit="isEdit"
             :feed-event="eventStore.selectedBottleFeedEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
             @submit="onSubmit" />
+          <EventDiaperEntryEdit v-else-if="eventStore.selectedEventToEdit === 'diaper_change'" :is-edit="isEdit"
+            :event="eventStore.selectedDiaperChangeEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
+            @submit="onSubmit" />
         </div>
       </template>
     </UDrawer>

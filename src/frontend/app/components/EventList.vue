@@ -20,9 +20,9 @@ const events: Array<{ name: IAPIEventType, icon: string }> = [
     icon: 'i-mdi-baby-bottle',
   },
   {
-    name: 'diaper',
+    name: 'diaper_change',
     icon: 'i-mdi-diaper-outline',
-    disabled: true
+    disabled: false
   },
   {
     name: 'pump',
