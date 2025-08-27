@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col items-center justify-between h-full gap-10">
-    <EventButton v-for="e in events" :key="e.name" :name="e.name" :icon="e.icon" :disabled="e.disabled"
+    <EventButton v-for="e in events" :key="e.name" :name="e.name" :icon="e.icon" :disabled="e.disabled" :type="e.type"
       @click="handleEventClick(e.name)" />
   </div>
 </template>
@@ -14,19 +14,21 @@ const emit = defineEmits<{
 }>()
 
 // Top-level events
-const events: Array<{ name: IAPIEventType, icon: string }> = [
+const events: Array<{ name: IAPIEventType, icon: string, type: IAPIEventType, disabled?: boolean }> = [
   {
-    name: 'feed_bottle',
+    name: 'Bottle Feed',
     icon: 'i-mdi-baby-bottle',
+    type: 'feed_bottle'
   },
   {
-    name: 'diaper_change',
+    name: 'Diaper Change',
     icon: 'i-mdi-diaper-outline',
-    disabled: false
+    type: 'diaper_change'
   },
   {
-    name: 'pump',
+    name: 'Pump',
     icon: 'i-mdi-mother-nurse',
+    type: 'pump',
     disabled: true
   },
 ]

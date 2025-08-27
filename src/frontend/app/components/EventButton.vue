@@ -21,10 +21,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { IAPIDiaperChangeEvent } from '~~/repository/modules/diaper/types';
+import type { IAPIEventType } from '~~/repository/modules/events/types';
 import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types';
 
-defineProps<{
+const props = defineProps<{
   name: string,
+  type: IAPIEventType,
   icon: string
 }>()
 
@@ -34,16 +37,19 @@ defineEmits<{
 
 const eventStore = useEventStore()
 
-const lastEvent: Ref<IAPIBottleFeedEvent | undefined> = ref(await eventStore.getLatestBottleFeedEvent())
+const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | undefined> = ref()
 
-watch(() => eventStore.selectedEventToEdit, async () => {
+updateLastEvent()
 
-  // Refresh the last event when a new event is added
-  const updatedLastEvent = await eventStore.getLatestBottleFeedEvent()
-  if (updatedLastEvent) {
-    lastEvent.value = updatedLastEvent
+async function updateLastEvent() {
+  if (props.type === 'feed_bottle') {
+    lastEvent.value = await eventStore.getLatestBottleFeedEvent()
+  } else if (props.type === 'diaper_change') {
+    lastEvent.value = await eventStore.getLatestDiaperChangeEvent()
   }
-})
+}
+
+watch(() => eventStore.selectedEventToEdit, updateLastEvent)
 
 </script>
 

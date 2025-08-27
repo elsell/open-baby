@@ -53,6 +53,17 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestFeedEvent[0]
   }
 
+  async function getLatestDiaperChangeEvent(): Promise<IAPIDiaperChangeEvent | undefined> {
+    const { $api } = useNuxtApp()
+
+    const latestDiaperEvent = await $api.events.diaper.listEventDiaper(1, 0)
+
+    if (latestDiaperEvent.length === 0) return undefined
+
+    return latestDiaperEvent[0]
+  }
+
+
   async function getLatestDiaperEvent(): Promise<IAPIDiaperChangeEvent | undefined> {
     const { $api } = useNuxtApp()
 
@@ -86,6 +97,7 @@ export const useEventStore = defineStore('eventStore', () => {
     getLatestBottleFeedEvent,
     getDefaultBottleFeedEventData,
     getDefaultDiaperEventData,
+    getLatestDiaperChangeEvent,
     clearEditState,
   }
 })
