@@ -242,7 +242,7 @@ async function onSubmit(event: FormSubmitEvent<DiaperChangeSchema>) {
         // Split the "HH:MM" string
         const [hours, minutes] = event.data.time.split(":").map(Number);
 
-        if (!hours) throw new Error("Hours is unexpectedly undefined.")
+        if (hours === undefined) throw new Error("Hours is unexpectedly undefined.", { cause: event.data.time })
 
         /**
          * Handle the JS Date constructor quirks - if you pass it a date
