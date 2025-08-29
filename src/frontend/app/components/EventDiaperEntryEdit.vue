@@ -9,7 +9,8 @@
 
                     <label class="font-bold">Diaper Type</label>
 
-                    <URadioGroup size="xl" variant="card" v-model="state.diaper_type" :items="diaperTypeItems"
+                    <URadioGroup
+v-model="state.diaper_type" size="xl" variant="card" :items="diaperTypeItems"
                         orientation="horizontal" indicator="hidden" :ui="{
                             fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
                             item: 'flex-grow'
@@ -31,7 +32,8 @@
                 <div class="flex flex-col gap-3">
                     <label class="font-bold">Size</label>
 
-                    <URadioGroup size="xl" variant="card" v-model="state.diaper_contents_size" :items="diaperSizeItems"
+                    <URadioGroup
+v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSizeItems"
                         orientation="horizontal" indicator="hidden" :ui="{
                             fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
                             item: 'flex-grow'
@@ -75,7 +77,8 @@
 
                                 <!-- A radio button-based selector for the diaper color, colored for easily
                                     selection by tired parents. -->
-                                <URadioGroup v-model="state.diaper_contents_color" :items="diaperColorItems"
+                                <URadioGroup
+                                    v-model="state.diaper_contents_color" :items="diaperColorItems"
                                     orientation="horizontal" variant="card" indicator="hidden" :ui="{
                                         fieldset: 'flex flex-col sm:flex-row flex-wrap gap-2 sm:items-center justify-between md:justify-start w-full',
                                         item: 'flex-grow'
@@ -83,7 +86,7 @@
                                     <template #label="{ item }">
                                         <div class="flex flex-row items-center gap-3">
                                             <!-- Color Indicator Rounded Square -->
-                                            <span :class="`block w-4 h-4 rounded-md bg-${item.color}`"></span>
+                                            <span :class="`block w-4 h-4 rounded-md bg-${item.color}`"/>
                                             <div :class="`flex flex-row items-center gap-1`">
                                                 <span>{{ item.label }}</span>
                                             </div>
@@ -97,7 +100,8 @@
                         <UFormField name="consistency">
                             <div class="flex flex-col gap-3">
                                 <label class="font-bold">Consistency</label>
-                                <URadioGroup v-model="state.diaper_contents_consistency" :items="diaperConsistencyItems"
+                                <URadioGroup
+                                    v-model="state.diaper_contents_consistency" :items="diaperConsistencyItems"
                                     orientation="horizontal" variant="card" indicator="hidden" :ui="{
                                         fieldset: 'flex flex-row flex-wrap items-center justify-between md:justify-start w-full',
                                         item: 'flex-grow'
@@ -125,7 +129,7 @@
                 </template>
             </UAccordion>
         </div>
-        <UButton size="xl" block type="submit">
+        <UButton size="xl" block type="submit" :loading="isLoading">
             {{ isEdit ? 'Edit Diaper' : 'Log Diaper' }}
         </UButton>
     </UForm>
@@ -135,7 +139,9 @@
 import type { IAPIDiaperChangeEvent, IAPIDiaperColor, IAPIDiaperConsistency } from '~~/repository/modules/diaper/types';
 import { DiaperColor, DiaperConsistency, DiaperSize, DiaperType, toDiaperColor, toDiaperConsistency, toDiaperSize, toDiaperType } from "~~/types/diaper"
 import * as v from 'valibot'
-import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
+import type { RadioGroupItem } from '@nuxt/ui';
+import { useEventForm } from '~/composables/useEventForm';
+
 const emit = defineEmits<{
     submit: [],
     cancel: []
@@ -148,15 +154,8 @@ const props = withDefaults(defineProps<{
     event: undefined
 })
 
-const toast = useToast()
-
-const isLoading = ref(false)
-
-const eventStore = useEventStore()
-
-const { $api } = useNuxtApp()
-
-const startingDiaperData: IAPIDiaperChangeEvent = props.event ? props.event : await eventStore.getDefaultDiaperEventData();
+const { $api } = useNuxtApp();
+const eventStore = useEventStore();
 
 const diaperSchema = v.object({
     time: v.pipe(v.string()),
@@ -170,21 +169,37 @@ const diaperSchema = v.object({
 
 type DiaperChangeSchema = v.InferOutput<typeof diaperSchema>
 
+const startingDiaperData = props.event ? props.event : await eventStore.getDefaultDiaperEventData();
 
-
-const state: DiaperChangeSchema = reactive({
-    // Extract only the date part from the ISO string
-    // to set as the default value for the date input
-    // If no date is provided, use today's date
-    // in YYYY-MM-DD format
-    date: (props.event && props.isEdit) ? new Date(props.event.time_start).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
-    time: (props.event && props.isEdit) ? dateToLocalTimeString(new Date(props.event.time_start)) : dateToLocalTimeString(new Date()),
+const initialState: DiaperChangeSchema = {
+    date: '', // Will be set by the composable
+    time: '', // Will be set by the composable
     diaper_type: toDiaperType(startingDiaperData.diaper_type),
     diaper_contents_color: toDiaperColor(startingDiaperData.diaper_contents_color),
     diaper_contents_consistency: toDiaperConsistency(startingDiaperData.diaper_contents_consistency),
     diaper_contents_size: toDiaperSize(startingDiaperData.diaper_contents_size),
     notes: startingDiaperData.notes
-})
+};
+
+const { state, onSubmit, isLoading } = useEventForm<typeof diaperSchema, IAPIDiaperChangeEvent>({
+    schema: diaperSchema,
+    createEvent: (data) => $api.events.diaper.createEventDiaper({
+        ...data,
+        name: 'diaper_change',
+        description: '',
+    }),
+    updateEvent: (data) => $api.events.diaper.updateEventDiaper({
+        ...data,
+        name: 'diaper_change',
+        description: '',
+    }),
+    onSubmit: () => {
+        emit('submit')
+    },
+    initialState,
+    isEdit: props.isEdit,
+    event: props.event,
+});
 
 const diaperTypeItems = ref<RadioGroupItem[]>([
     {
@@ -234,77 +249,6 @@ const diaperConsistencyItems: Ref<{ label: string, value: IAPIDiaperConsistency,
     { label: 'Watery', value: 'watery', icon: 'i-mdi-liquid-spot' },
 ])
 
-async function onSubmit(event: FormSubmitEvent<DiaperChangeSchema>) {
-
-    isLoading.value = true
-
-    try {
-        // Split the "HH:MM" string
-        const [hours, minutes] = event.data.time.split(":").map(Number);
-
-        if (hours === undefined) throw new Error("Hours is unexpectedly undefined.", { cause: event.data.time })
-
-        /**
-         * Handle the JS Date constructor quirks - if you pass it a date
-         * it will assume it's UTC and convert to local time, which is not what we want.
-         * @param dateString Date string in YYYY-MM-DD format
-         */
-        function parseLocalDate(dateString: string): Date {
-            const [year, month, day] = dateString.split("-").map(Number);
-            // Check for invalid date parts
-            if (!year || !month || !day) throw new Error("Invalid date string");
-            return new Date(year, month - 1, day); // local midnight
-        }
-
-        // Clone the date to avoid mutating original
-        const combinedDate = parseLocalDate(event.data.date);
-
-        // Set the hours/minutes on that date
-        combinedDate.setHours(hours, minutes, 0, 0);
-
-
-        // Format as ISO string for the API
-        const timeStart: string = combinedDate.toISOString();
-
-        console.log(props.event?.id, "foo")
-
-        const newDiaperChange: IAPIDiaperChangeEvent = {
-            name: "diaper_change",
-            description: "",
-            id: props.event ? props.event.id : "",
-            time_start: timeStart,
-            diaper_type: event.data.diaper_type,
-            diaper_contents_color: event.data.diaper_contents_color,
-            diaper_contents_consistency: event.data.diaper_contents_consistency,
-            diaper_contents_size: event.data.diaper_contents_size,
-            time_end: timeStart,
-            notes: event.data.notes
-        }
-
-        if (props.isEdit) {
-            await $api.events.diaper.updateEventDiaper(newDiaperChange)
-        } else {
-            await $api.events.diaper.createEventDiaper(newDiaperChange)
-        }
-
-        eventStore.clearEditState()
-
-        toast.add({
-            title: "Diaper Change Logged",
-            color: "success",
-        })
-
-        emit('submit')
-
-    } catch (e) {
-
-        console.error("Error creating new diaper change event", e)
-
-    } finally {
-        isLoading.value = false
-    }
-
-}
 </script>
 
 <style></style>
