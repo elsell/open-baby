@@ -1,5 +1,6 @@
 <template>
-  <UForm :schema="bottleFeedSchema" :state="state" class="flex flex-col justify-between gap-10 h-full"
+  <UForm
+:schema="bottleFeedSchema" :state="state" class="flex flex-col justify-between gap-10 h-full"
     @submit="onSubmit">
     <div class="h-full flex flex-col gap-5">
 
@@ -41,7 +42,9 @@
 
           <label class="font-bold">Feed Type</label>
 
-          <URadioGroup size="xl" variant="card" v-model="state.isFormula" :items="isFormulaItems"
+          <URadioGroup
+            v-model="state.isFormula"
+            size="xl" variant="card" :items="isFormulaItems"
             orientation="horizontal" indicator="hidden" :ui="{
               fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
               item: 'flex-grow'
@@ -56,16 +59,19 @@
         </div>
       </UFormField>
     </div>
-    <UButton size="xl" block type="submit">
+    <UButton size="xl" block type="submit" :loading="isLoading">
       {{ isEdit ? 'Edit Bottle Feed' : 'Log Bottle Feed' }}
     </UButton>
+    {{ state }}
   </UForm>
 </template>
 
 <script lang="ts" setup>
 import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types';
 import * as v from 'valibot'
-import type { FormSubmitEvent, RadioGroupItem } from '@nuxt/ui';
+import type { RadioGroupItem } from '@nuxt/ui';
+import { useEventForm } from '~/composables/useEventForm';
+
 const emit = defineEmits<{
   submit: [],
   cancel: []
@@ -78,35 +84,52 @@ const props = withDefaults(defineProps<{
   feedEvent: undefined
 })
 
-const toast = useToast()
-
-const isLoading = ref(false)
-
-const eventStore = useEventStore()
-
 const { $api } = useNuxtApp()
-
-const startingFeedData: IAPIBottleFeedEvent = props.feedEvent ? props.feedEvent : await eventStore.getDefaultBottleFeedEventData();
+const eventStore = useEventStore();
 
 const bottleFeedSchema = v.object({
   amountMl: v.pipe(v.number()),
   time: v.pipe(v.string()),
   date: v.pipe(v.string()),
-  isFormula: v.pipe(v.boolean())
+  isFormula: v.pipe(v.boolean()),
+  notes: v.nullish(v.pipe(v.string()))
 })
 
 type BottleFeedSchema = v.InferOutput<typeof bottleFeedSchema>
 
-const state: BottleFeedSchema = reactive({
+const startingFeedData = props.feedEvent ? props.feedEvent : await eventStore.getDefaultBottleFeedEventData();
+
+const initialState: BottleFeedSchema = {
   amountMl: startingFeedData.amount_ml,
-  // Extract only the date part from the ISO string
-  // to set as the default value for the date input
-  // If no date is provided, use today's date
-  // in YYYY-MM-DD format
-  date: (props.feedEvent && props.isEdit) ? new Date(props.feedEvent.time_start).toLocaleDateString('en-CA') : new Date().toLocaleDateString('en-CA'),
-  time: (props.feedEvent && props.isEdit) ? dateToLocalTimeString(new Date(props.feedEvent.time_start)) : dateToLocalTimeString(new Date()),
-  isFormula: startingFeedData.is_formula
-})
+  date: '', // Will be set by the composable
+  time: '', // Will be set by the composable
+  isFormula: startingFeedData.is_formula,
+  notes: startingFeedData.notes
+};
+
+const { state, onSubmit, isLoading } = useEventForm<typeof bottleFeedSchema, IAPIBottleFeedEvent>({
+  schema: bottleFeedSchema,
+  createEvent: (data) => $api.events.feed.createEventBottleFeed({
+    ...data,
+    name: 'feed_bottle',
+    description: '',
+    amount_ml: data.amountMl,
+    is_formula: data.isFormula,
+  }),
+  updateEvent: (data) => $api.events.feed.updateEventBottleFeed({
+    ...data,
+    name: 'feed_bottle',
+    description: '',
+    amount_ml: data.amountMl,
+    is_formula: data.isFormula,
+  }),
+  onSubmit: () => {
+    emit('submit');
+  },
+  initialState,
+  isEdit: props.isEdit,
+  event: props.feedEvent,
+});
 
 const isFormulaItems = ref<RadioGroupItem[]>([
   {
@@ -123,72 +146,6 @@ const isFormulaItems = ref<RadioGroupItem[]>([
   }
 ])
 
-async function onSubmit(event: FormSubmitEvent<BottleFeedSchema>) {
-
-  isLoading.value = true
-
-  try {
-    // Split the "HH:MM" string
-    const [hours, minutes] = event.data.time.split(":").map(Number);
-
-    if (hours === undefined) throw new Error("Hours is unexpectedly undefined.", { cause: event.data.time })
-
-    /**
-     * Handle the JS Date constructor quirks - if you pass it a date
-     * it will assume it's UTC and convert to local time, which is not what we want.
-     * @param dateString Date string in YYYY-MM-DD format
-     */
-    function parseLocalDate(dateString: string): Date {
-      const [year, month, day] = dateString.split("-").map(Number);
-      // Check for invalid date parts
-      if (!year || !month || !day) throw new Error("Invalid date string");
-      return new Date(year, month - 1, day); // local midnight
-    }
-
-    // Clone the date to avoid mutating original
-    const combinedDate = parseLocalDate(event.data.date);
-
-    // Set the hours/minutes on that date
-    combinedDate.setHours(hours, minutes, 0, 0);
-
-
-    // Format as ISO string for the API
-    const timeStart: string = combinedDate.toISOString();
-
-    const newBottleFeed: IAPIBottleFeedEvent = {
-      name: "feed_bottle",
-      description: "",
-      id: props.feedEvent ? props.feedEvent.id : "",
-      amount_ml: event.data.amountMl,
-      is_formula: event.data.isFormula,
-      time_start: timeStart,
-      time_end: timeStart
-    }
-
-    if (props.isEdit) {
-      await $api.events.feed.updateEventBottleFeed(newBottleFeed)
-    } else {
-      await $api.events.feed.createEventBottleFeed(newBottleFeed)
-    }
-
-    eventStore.clearEditState()
-
-    toast.add({
-      title: "Feed Event Logged",
-      color: "success",
-    })
-
-    emit('submit')
-
-  } catch (e) {
-
-    console.error("Error creating new bottle feed event", e)
-
-  } finally {
-    isLoading.value = false
-  }
-
-}
 </script>
 
 <style></style>
