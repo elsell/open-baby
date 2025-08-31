@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col gap-1">
-    <UTable :column-visibility="{ id: false, metadata: false }" :data="data?.events" :columns="columns"
+    <UTable :column-visibility="{ id: false, metadata: false, time_end: false }" :data="data?.events" :columns="columns"
       @select="onSelect" :loading="status === 'pending'" class="flex-1" />
 
     <ConfirmDialog :open="showDialog" title="Delete Event" description="This action cannot be undone."
@@ -18,6 +18,7 @@ import type { IAPIEvent, IAPIEventType } from '~~/repository/modules/events/type
 import { ConfirmDialog, NuxtTime, UIcon } from '#components';
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
+import type { IAPIBreastFeedEvent } from '~~/repository/modules/feed/types';
 const { $api } = useNuxtApp()
 
 const UButton = resolveComponent('UButton')
@@ -43,6 +44,13 @@ async function onSelect(row: TableRow<IAPIEvent>, e?: Event) {
   else if (eventType === 'diaper_change') {
     const diaperChangeEvent = await $api.events.diaper.getEventDiaper(eventId)
     eventStore.selectedDiaperChangeEventToEdit = diaperChangeEvent
+  }
+  else if (eventType === 'feed_breast') {
+    const breastFeedEvent = await $api.events.feed.getEventBreastFeed(eventId)
+    eventStore.selectedBreastFeedEventToEdit = breastFeedEvent
+  }
+  else {
+    throw new Error("Unknown event type. Ensure you're implementing it in history.vue");
   }
 
   // Open the drawer
@@ -131,6 +139,26 @@ const columns: TableColumn<IAPIEvent>[] = [
           ])
         ])
       }
+      else if (eventType === 'feed_breast') {
+        displayName = 'Breast Feed'
+
+        const timeStart = row.getValue("time_start") as string
+        const timeEnd = row.getValue("time_end") as string | undefined
+
+        const durationMins =  ( (timeEnd ? (new Date(timeEnd).getTime()): (new Date().getTime())) - new Date(timeStart).getTime()) / 60000
+
+        // Add icon
+        const icon = 'i-mdi-mother-nurse'
+
+        return h('div', { style: "display: flex; flex-direction: row; align-items: center; flex-gap: 8px;" }, [
+          h(UIcon, { name: icon, class: 'text-2xl mr-2' }),
+          h('div', [
+            h('span', { style: 'text-transform: capitalize;' }, displayName),
+            h('br'),
+            h('span', { class: 'opacity-50 text-sm' }, `${durationMins} mins`)
+          ])
+        ])
+      }
 
       return h('span', { style: 'text-transform: capitalize;' }, displayName)
     }
@@ -159,7 +187,13 @@ const columns: TableColumn<IAPIEvent>[] = [
     }
   },
   {
+    accessorKey: "time_end",
+    enableHiding: true
+  },
+  {
     id: 'actions',
+    accessorKey: 'actions',
+    header: "",
     cell: ({ row }) => {
       return h(
         'div',

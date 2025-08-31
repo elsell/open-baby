@@ -10,6 +10,10 @@
           <EventDiaperEntryEdit v-else-if="eventStore.selectedEventToEdit === 'diaper_change'" :is-edit="isEdit"
             :event="eventStore.selectedDiaperChangeEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
             @submit="onSubmit" />
+          <EventBreastFeedEntryEdit v-else-if="eventStore.selectedEventToEdit === 'feed_breast'" :is-edit="isEdit"
+            :event="eventStore.selectedBreastFeedEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
+            @submit="onSubmit" />
+            {{ eventStore.selectedBreastFeedEventToEdit }}
         </div>
       </template>
     </UDrawer>

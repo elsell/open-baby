@@ -21,13 +21,18 @@ const events: Array<{ name: string, icon: string, type: IAPIEventType, disabled?
     type: 'feed_bottle'
   },
   {
+    name: "Breast Feed",
+    icon: "i-mdi-mother-nurse",
+    type: "feed_breast"
+  },
+  {
     name: 'Diaper Change',
     icon: 'i-mdi-diaper-outline',
     type: 'diaper_change'
   },
   {
     name: 'Pump',
-    icon: 'i-mdi-mother-nurse',
+    icon: 'i-healthicons-breast-pump',
     type: 'pump',
     disabled: true
   },

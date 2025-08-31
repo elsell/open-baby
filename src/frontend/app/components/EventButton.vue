@@ -23,7 +23,7 @@
 <script lang="ts" setup>
 import type { IAPIDiaperChangeEvent } from '~~/repository/modules/diaper/types';
 import type { IAPIEventType } from '~~/repository/modules/events/types';
-import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types';
+import type { IAPIBottleFeedEvent, IAPIBreastFeedEvent } from '~~/repository/modules/feed/types';
 
 const props = defineProps<{
   name: string,
@@ -37,7 +37,7 @@ defineEmits<{
 
 const eventStore = useEventStore()
 
-const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | undefined> = ref()
+const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | IAPIBreastFeedEvent | undefined> = ref()
 
 updateLastEvent()
 
@@ -46,6 +46,12 @@ async function updateLastEvent() {
     lastEvent.value = await eventStore.getLatestBottleFeedEvent()
   } else if (props.type === 'diaper_change') {
     lastEvent.value = await eventStore.getLatestDiaperChangeEvent()
+  }
+  else if (props.type === 'feed_breast') {
+    lastEvent.value = await eventStore.getLatestBreastFeedEvent()
+  }
+  else {
+    throw new Error(`Unknown event type "${props.type}". Please register in EventButton.vue`)
   }
 }
 

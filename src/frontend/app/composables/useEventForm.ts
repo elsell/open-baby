@@ -68,6 +68,7 @@ export function useEventForm<T extends EventFormSchema, U>(
         throw new Error('Hours is unexpectedly undefined.', { cause: formData.time });
       }
 
+
       function parseLocalDate(dateString: string): Date {
         const [year, month, day] = dateString.split('-').map(Number);
         if (!year || !month || !day) throw new Error('Invalid date string');

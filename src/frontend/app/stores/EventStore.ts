@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import type { IAPIDiaperChangeEvent } from '~~/repository/modules/diaper/types'
 import type { IAPIEventType } from '~~/repository/modules/events/types'
-import type { IAPIBottleFeedEvent } from '~~/repository/modules/feed/types'
+import type { IAPIBottleFeedEvent, IAPIBreastFeedEvent } from '~~/repository/modules/feed/types'
 
 export const useEventStore = defineStore('eventStore', () => {
 
@@ -9,7 +9,10 @@ export const useEventStore = defineStore('eventStore', () => {
 
   const selectedBottleFeedEventToEdit: Ref<IAPIBottleFeedEvent | undefined> = ref()
 
+  const selectedBreastFeedEventToEdit: Ref<IAPIBreastFeedEvent | undefined> = ref()
+
   const selectedDiaperChangeEventToEdit: Ref<IAPIDiaperChangeEvent | undefined> = ref()
+
 
 
   function GET_DEFAULT_FEED_EVENT(): IAPIBottleFeedEvent {
@@ -37,10 +40,22 @@ export const useEventStore = defineStore('eventStore', () => {
     }
   }
 
+  function GET_DEFAULT_BREAST_FEED_EVENT(): IAPIBreastFeedEvent {
+    return {
+      id: "",
+      description: "",
+      name: "feed_breast",
+      time_start: (new Date()).toISOString(),
+      side: 'both',
+      time_end: undefined,
+    }
+  }
+
   function clearEditState() {
     selectedEventToEdit.value = undefined
     selectedBottleFeedEventToEdit.value = undefined
     selectedDiaperChangeEventToEdit.value = undefined
+    selectedBreastFeedEventToEdit.value = undefined
   }
 
   async function getLatestBottleFeedEvent(): Promise<IAPIBottleFeedEvent | undefined> {
@@ -63,6 +78,15 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestDiaperEvent[0]
   }
 
+  async function getLatestBreastFeedEvent(): Promise<IAPIBreastFeedEvent | undefined> {
+    const { $api } = useNuxtApp()
+
+    const latestBreastFeedEvent = await $api.events.feed.listEventBreastFeed(1, 0)
+
+    if (latestBreastFeedEvent.length === 0) return undefined
+
+    return latestBreastFeedEvent[0]
+  }
 
   async function getLatestDiaperEvent(): Promise<IAPIDiaperChangeEvent | undefined> {
     const { $api } = useNuxtApp()
@@ -82,6 +106,14 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestEvent
   }
 
+  async function getDefaultBreastFeedEventData(): Promise<IAPIBreastFeedEvent> {
+    const latestEvent = await getLatestBreastFeedEvent()
+
+    if (!latestEvent) return GET_DEFAULT_BREAST_FEED_EVENT()
+
+    return latestEvent
+  }
+
   async function getDefaultDiaperEventData(): Promise<IAPIDiaperChangeEvent> {
     const latestEvent = await getLatestDiaperEvent()
 
@@ -94,10 +126,13 @@ export const useEventStore = defineStore('eventStore', () => {
     selectedEventToEdit,
     selectedDiaperChangeEventToEdit,
     selectedBottleFeedEventToEdit,
+    selectedBreastFeedEventToEdit,
     getLatestBottleFeedEvent,
     getDefaultBottleFeedEventData,
     getDefaultDiaperEventData,
+    getDefaultBreastFeedEventData,
     getLatestDiaperChangeEvent,
+    getLatestBreastFeedEvent,
     clearEditState,
   }
 })
