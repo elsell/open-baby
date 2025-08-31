@@ -3,7 +3,7 @@
     <UDrawer v-model:open="showEventEntryDrawer" should-scale-background set-background-color-on-scale handle-only
       @close="eventStore.selectedEventToEdit = undefined">
       <template #content>
-        <div class="min-h-[50vh] relative flex flex-col p-5">
+        <div class="min-h-[50vh] relative flex flex-col p-5 overflow-scroll">
           <EventFeedEntryEdit v-if="eventStore.selectedEventToEdit === 'feed_bottle'" :is-edit="isEdit"
             :feed-event="eventStore.selectedBottleFeedEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
             @submit="onSubmit" />
