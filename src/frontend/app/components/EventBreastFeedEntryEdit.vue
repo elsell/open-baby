@@ -115,7 +115,7 @@ const initialState: BreastFeedSchema = {
   side: toBreastFeedSide(startingFeedData.side),
   date: '', // Will be set by the composable
   time: '', // Will be set by the composable
-  notes: startingFeedData.notes
+  notes: props.isEdit ? startingFeedData.notes : undefined
 };
 
 const { state, onSubmit, isLoading } = useEventForm<typeof breastFeedSchema, IAPIBreastFeedEvent>({

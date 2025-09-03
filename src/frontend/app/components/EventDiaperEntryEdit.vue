@@ -169,16 +169,18 @@ const diaperSchema = v.object({
 
 type DiaperChangeSchema = v.InferOutput<typeof diaperSchema>
 
-const startingDiaperData = props.event ? props.event : await eventStore.getDefaultDiaperEventData();
+const defaultDiaperData = await eventStore.getDefaultDiaperEventData()
+
+const startingDiaperData = props.event ? props.event : defaultDiaperData;
 
 const initialState: DiaperChangeSchema = {
     date: '', // Will be set by the composable
     time: '', // Will be set by the composable
-    diaper_type: toDiaperType(startingDiaperData.diaper_type),
-    diaper_contents_color: toDiaperColor(startingDiaperData.diaper_contents_color),
-    diaper_contents_consistency: toDiaperConsistency(startingDiaperData.diaper_contents_consistency),
-    diaper_contents_size: toDiaperSize(startingDiaperData.diaper_contents_size),
-    notes: startingDiaperData.notes
+    diaper_type: toDiaperType(defaultDiaperData.diaper_type),
+    diaper_contents_color: toDiaperColor(defaultDiaperData.diaper_contents_color),
+    diaper_contents_consistency: toDiaperConsistency(defaultDiaperData.diaper_contents_consistency),
+    diaper_contents_size: toDiaperSize(defaultDiaperData.diaper_contents_size),
+    notes: props.isEdit ? startingDiaperData.notes : undefined
 };
 
 const { state, onSubmit, isLoading } = useEventForm<typeof diaperSchema, IAPIDiaperChangeEvent>({

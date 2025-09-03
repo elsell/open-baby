@@ -104,7 +104,7 @@ const initialState: BottleFeedSchema = {
   date: '', // Will be set by the composable
   time: '', // Will be set by the composable
   isFormula: startingFeedData.is_formula,
-  notes: startingFeedData.notes
+  notes: props.isEdit ? startingFeedData.notes : undefined
 };
 
 const { state, onSubmit, isLoading } = useEventForm<typeof bottleFeedSchema, IAPIBottleFeedEvent>({
