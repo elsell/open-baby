@@ -78,7 +78,7 @@ Assuming that you have [installed Docker Compose](https://docs.docker.com/compos
 sudo docker compose up
 ```
 
-You then can access Open Baby in your web browser at http://localhost:3000!
+You then can access Open Baby in your web browser at https://localhost!
 
 ## Features
 
