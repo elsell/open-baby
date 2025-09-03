@@ -9,6 +9,7 @@ class EventType(str, Enum):
     FEED_BOTTLE = "feed_bottle"
     FEED_BREAST = "feed_breast"
     DIAPER_CHANGE = "diaper_change"
+    PUMP = "pump"
 
 
 class Event(BaseModel):

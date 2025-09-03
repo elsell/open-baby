@@ -9,6 +9,7 @@ from persistence.dependencies import get_db
 import datetime
 from events.feed.router import router as feed_router
 from events.diaper.router import router as diaper_router
+from events.pump.router import router as pump_router
 
 router = APIRouter()
 
@@ -16,6 +17,7 @@ log = structlog.get_logger()
 
 router.include_router(feed_router, prefix="/feed", tags=["feed"])
 router.include_router(diaper_router, prefix="/diaper", tags=["diaper"])
+router.include_router(pump_router, prefix="/pump", tags=["pump"])
 
 
 @router.post("/", response_model=schemas.Event)

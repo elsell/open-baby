@@ -31,6 +31,7 @@ if config.config_file_name is not None:
 from persistence.database import Base  # noqa: E402
 from events.feed.models import FeedBottleEvent, FeedBreastEvent  # noqa: F401, E402
 from events.diaper.models import DiaperEvent  # noqa: F401, E402
+from events.pump.models import PumpEvent  # noqa: F401, E402
 
 target_metadata = Base.metadata
 
