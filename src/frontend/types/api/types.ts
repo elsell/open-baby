@@ -160,6 +160,58 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/events/pump/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Pump Events
+         * @description List pump events with pagination.
+         */
+        get: operations["list_pump_events_events_pump__get"];
+        put?: never;
+        /**
+         * Create Pump Event
+         * @description Create a new pump event.
+         */
+        post: operations["create_pump_event_events_pump__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/events/pump/{event_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Pump Event
+         * @description Retrieve a pump event by its ID.
+         */
+        get: operations["get_pump_event_events_pump__event_id__get"];
+        /**
+         * Update Pump Event
+         * @description Update an existing pump event.
+         */
+        put: operations["update_pump_event_events_pump__event_id__put"];
+        post?: never;
+        /**
+         * Delete Pump Event
+         * @description Delete a pump event by its ID.
+         */
+        delete: operations["delete_pump_event_events_pump__event_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/events/": {
         parameters: {
             query?: never;
@@ -309,7 +361,7 @@ export interface components {
          * @description Enum for event types.
          * @enum {string}
          */
-        EventType: "feed_bottle" | "feed_breast" | "diaper_change";
+        EventType: "feed_bottle" | "feed_breast" | "diaper_change" | "pump";
         /**
          * EventWithMetadataResponse
          * @description Pydantic model for API responses
@@ -393,6 +445,35 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /**
+         * PumpEvent
+         * @description Event for diaper changes.
+         */
+        PumpEvent: {
+            /** Id */
+            id: string;
+            /** @default pump */
+            name: components["schemas"]["EventType"];
+            /**
+             * Description
+             * @default Pump event
+             */
+            description: string;
+            /**
+             * Time Start
+             * Format: date-time
+             */
+            time_start: string;
+            /** Time End */
+            time_end?: string | null;
+            /** Notes */
+            notes?: string | null;
+            /**
+             * Amount Ml
+             * @description Amount pumped in milliliters
+             */
+            amount_ml: number;
         };
         /** ValidationError */
         ValidationError: {
@@ -868,6 +949,168 @@ export interface operations {
         };
     };
     delete_diaper_event_events_diaper__event_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_pump_events_events_pump__get: {
+        parameters: {
+            query?: {
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PumpEvent"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_pump_event_events_pump__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PumpEvent"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PumpEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_pump_event_events_pump__event_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PumpEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_pump_event_events_pump__event_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                event_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PumpEvent"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PumpEvent"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_pump_event_events_pump__event_id__delete: {
         parameters: {
             query?: never;
             header?: never;
