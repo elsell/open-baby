@@ -8,6 +8,7 @@
         <span>{{ page.title }}</span>
       </div>
     </UButton>
+    <ColorModeButton />
   </div>
 </template>
 
