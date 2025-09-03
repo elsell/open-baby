@@ -18,7 +18,6 @@ import type { IAPIEvent, IAPIEventType } from '~~/repository/modules/events/type
 import { ConfirmDialog, NuxtTime, UIcon } from '#components';
 import type { TableColumn, TableRow } from '@nuxt/ui'
 import type { Row } from '@tanstack/vue-table'
-import type { IAPIBreastFeedEvent } from '~~/repository/modules/feed/types';
 const { $api } = useNuxtApp()
 
 const UButton = resolveComponent('UButton')
