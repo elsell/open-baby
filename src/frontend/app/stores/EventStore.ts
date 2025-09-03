@@ -5,6 +5,9 @@ import type { IAPIBottleFeedEvent, IAPIBreastFeedEvent } from '~~/repository/mod
 
 export const useEventStore = defineStore('eventStore', () => {
 
+  // true = edit, false = create
+  const isEdit = ref(false)
+
   const selectedEventToEdit: Ref<IAPIEventType | undefined> = ref()
 
   const selectedBottleFeedEventToEdit: Ref<IAPIBottleFeedEvent | undefined> = ref()
@@ -56,6 +59,7 @@ export const useEventStore = defineStore('eventStore', () => {
     selectedBottleFeedEventToEdit.value = undefined
     selectedDiaperChangeEventToEdit.value = undefined
     selectedBreastFeedEventToEdit.value = undefined
+    isEdit.value = false
   }
 
   async function getLatestBottleFeedEvent(): Promise<IAPIBottleFeedEvent | undefined> {
@@ -122,11 +126,23 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestEvent
   }
 
+  async function getRecentlyUsedBottleFeedAmounts(): Promise<Array<number>> {
+    const { $api } = useNuxtApp()
+    const recentEvents = await $api.events.feed.listEventBottleFeed(50, 0)
+    const amounts = recentEvents.map(event => event.amount_ml)
+
+    console.log(amounts)
+
+    // Remove duplicates, only return 5 most recent
+    return Array.from(new Set(amounts)).slice(0, 5).toSorted((a: number, b: number) => b - a)
+  }
+
   return {
     selectedEventToEdit,
     selectedDiaperChangeEventToEdit,
     selectedBottleFeedEventToEdit,
     selectedBreastFeedEventToEdit,
+    isEdit,
     getLatestBottleFeedEvent,
     getDefaultBottleFeedEventData,
     getDefaultDiaperEventData,
@@ -134,5 +150,6 @@ export const useEventStore = defineStore('eventStore', () => {
     getLatestDiaperChangeEvent,
     getLatestBreastFeedEvent,
     clearEditState,
+    getRecentlyUsedBottleFeedAmounts
   }
 })

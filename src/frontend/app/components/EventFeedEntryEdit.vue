@@ -3,16 +3,33 @@
 :schema="bottleFeedSchema" :state="state" class="flex flex-col justify-between gap-10 h-full"
     @submit="onSubmit">
     <div class="h-full flex flex-col gap-5">
-
       <!-- Amount -->
       <div class="flex flex-col  gap-3">
         <div class="flex flex-row justify-between w-full">
           <label class="font-bold">Amount</label>
-          <span class="opacity-80">{{ state.amountMl }}ml ({{ mlToOz(state.amountMl, 1) }}oz)</span>
+          <span class="opacity-80 flex flex-row ">
+            <input v-model="state.amountMl" type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline"  >
+            <span>
+            ml ({{ mlToOz(state.amountMl, 1) }}oz)
+          </span>
+          </span>
         </div>
 
         <UFormField name="amountMl">
-          <USlider v-model="state.amountMl" size="xl" :min="0" :max="200" />
+          <div class="flex flex-col gap-2">
+          <USlider
+v-model="state.amountMl" size="xl" :min="0" :max="200" :ui="{
+            track: 'h-9 rounded-sm',
+            range: 'rounded-sm rounded-r-none ',
+            thumb: 'h-9 w-2 rounded-sm'
+          }" />
+          <!-- Preset Value Chips -->
+          <div class="flex flex-row items-center gap-3">
+            <UButton v-for="amount in presetFeedAmountsMl" :key="amount" class="cursor-pointer" size="xs" color="neutral" variant="outline" @click="state.amountMl = amount" >
+              {{ amount }} ml
+            </UButton>
+          </div>
+          </div>
         </UFormField>
       </div>
 
@@ -62,7 +79,6 @@
     <UButton size="xl" block type="submit" :loading="isLoading">
       {{ isEdit ? 'Edit Bottle Feed' : 'Log Bottle Feed' }}
     </UButton>
-    {{ state }}
   </UForm>
 </template>
 
@@ -86,6 +102,8 @@ const props = withDefaults(defineProps<{
 
 const { $api } = useNuxtApp()
 const eventStore = useEventStore();
+
+const presetFeedAmountsMl: Array<number> = (await eventStore.getRecentlyUsedBottleFeedAmounts()).toReversed()
 
 const bottleFeedSchema = v.object({
   amountMl: v.pipe(v.number()),

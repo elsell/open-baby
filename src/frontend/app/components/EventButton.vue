@@ -1,22 +1,30 @@
 <template>
-  <UButton class="h-full w-full cursor-pointer" style="text-transform: capitalize;" @click="$emit('click')">
+  <div class="h-full w-full relative">
+  <UButton class="h-full w-full cursor-pointer" style="text-transform: capitalize;" @click="$emit('click')" >
     <div class="w-full flex flex-col relative">
 
       <div class="w-full h-full flex flex-col items-center justify-center gap-3 text-5xl">
         <UIcon class="text-6xl md:text-9xl" :name="icon" />
         <span class="opacity-80">{{ name }}</span>
       </div>
-      <div class="flex flex-row items-center justify-center gap-3 text-md absolute top-0 right-0 bg-neutral-300 dark:bg-neutral-800 dark:text-white rounded-md p-1 px-2">
-        <UIcon name="i-ph-clock-counter-clockwise" />
-        <span>
-          <NuxtTime v-if="lastEvent" :datetime="lastEvent.time_start"
-            :time-zone="Intl.DateTimeFormat().resolvedOptions().timeZone" relative />
-        </span>
-      </div>
     </div>
 
 
   </UButton>
+        <div
+      class="flex flex-row items-center justify-center gap-3 z-[100] m-2
+       text-md absolute top-0 right-0 bg-neutral-800 opacity-85 dark:bg-neutral-800 text-white dark:text-white rounded-md p-1 px-2"
+      @click.prevent="handleClickLastEvent">
+        <UIcon name="i-ph-clock-counter-clockwise" />
+        <span class="flex flex-col items-start">
+          <span v-if="type==='feed_bottle' && lastEvent && 'amount_ml' in lastEvent" class="font-bold">
+            {{ lastEvent.amount_ml }} ml</span>
+          <NuxtTime
+v-if="lastEvent" :datetime="lastEvent.time_start"
+            :time-zone="Intl.DateTimeFormat().resolvedOptions().timeZone" relative />
+        </span>
+      </div>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -38,6 +46,8 @@ const eventStore = useEventStore()
 
 const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | IAPIBreastFeedEvent | undefined> = ref()
 
+const {$api} = useNuxtApp()
+
 updateLastEvent()
 
 async function updateLastEvent() {
@@ -51,6 +61,28 @@ async function updateLastEvent() {
   }
   else {
     throw new Error(`Unknown event type "${props.type}". Please register in EventButton.vue`)
+  }
+}
+
+async function handleClickLastEvent() {
+  eventStore.clearEditState()
+  eventStore.isEdit = true
+
+  if(props.type === 'feed_bottle' && lastEvent.value && 'id' in lastEvent.value) {
+    eventStore.selectedBottleFeedEventToEdit = await $api.events.feed.getEventBottleFeed(lastEvent.value.id)
+    eventStore.selectedEventToEdit = 'feed_bottle'
+  }
+  else if(props.type === 'diaper_change' && lastEvent.value && 'id' in lastEvent.value) {
+    eventStore.selectedDiaperChangeEventToEdit = await $api.events.diaper.getEventDiaper(lastEvent.value.id)
+    eventStore.selectedEventToEdit = 'diaper_change'
+    
+  }
+  else if(props.type === 'feed_breast' && lastEvent.value && 'id' in lastEvent.value) {
+    eventStore.selectedBreastFeedEventToEdit = await $api.events.feed.getEventBreastFeed(lastEvent.value.id)
+    eventStore.selectedEventToEdit = 'feed_breast'
+  }
+  else {
+    console.warn("No last event to edit")
   }
 }
 

@@ -2,7 +2,7 @@
   <div class="h-full">
     <EventList @event="handleEvent" />
 
-    <EventEditDrawer />
+    <EventEditDrawer :is-edit="eventStore.isEdit" />
   </div>
 </template>
 
@@ -14,6 +14,7 @@ const eventStore = useEventStore()
 
 
 function handleEvent(event: IAPIEventType) {
+  eventStore.clearEditState()
   eventStore.selectedEventToEdit = event
 }
 </script>

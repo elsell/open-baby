@@ -4,6 +4,10 @@
       @close="eventStore.selectedEventToEdit = undefined">
       <template #content>
         <div class="min-h-[50vh] relative flex flex-col p-5 overflow-scroll">
+          <span class="flex flex-row items-center gap-3 mb-3 text-xl">
+            <UIcon :name="isEdit ? 'i-ph-pencil' : 'i-ph-plus'" />
+          <h2 class="font-semibold ">{{isEdit ? `Edit Event` : `New Event`}}</h2>
+          </span>
           <EventFeedEntryEdit v-if="eventStore.selectedEventToEdit === 'feed_bottle'" :is-edit="isEdit"
             :feed-event="eventStore.selectedBottleFeedEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
             @submit="onSubmit" />
