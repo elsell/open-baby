@@ -2,19 +2,21 @@ import { $fetch, type FetchOptions } from 'ofetch';
 import { FeedModule } from '@@/repository/modules/feed/feed'
 import { DiaperModule } from '@@/repository/modules/diaper/diaper'
 import { EventsModule } from '@@/repository/modules/events/events';
+import { PumpModule } from '@@/repository/modules/pump/pump'
 
 interface IApiInstance {
   events: {
     events: EventsModule;
     feed: FeedModule;
-    diaper: DiaperModule
+    diaper: DiaperModule;
+    pump: PumpModule;
   }
 }
 
 export function apiModule(/*nuxtApp*/) {
   const config = useRuntimeConfig()
 
-  const fetchOptions: Record<"feed" | "events" | "diaper", FetchOptions> = {
+  const fetchOptions: Record<"feed" | "events" | "diaper" | "pump", FetchOptions> = {
     feed: {
       baseURL: config.public.apiBase
     },
@@ -23,21 +25,25 @@ export function apiModule(/*nuxtApp*/) {
     },
     diaper: {
       baseURL: config.public.apiBase
+    },
+    pump: {
+      baseURL: config.public.apiBase
     }
   };
 
 
   const feedApiFetcher = $fetch.create(fetchOptions.feed);
   const eventsApiFetcher = $fetch.create(fetchOptions.events);
-  const diaperApiFetcher = $fetch.create(fetchOptions.events);
-
+  const diaperApiFetcher = $fetch.create(fetchOptions.diaper);
+  const pumpApiFetcher = $fetch.create(fetchOptions.pump);
 
   // An object containing all repositories we need to expose
   const modules: IApiInstance = {
     events: {
       feed: new FeedModule(feedApiFetcher, fetchOptions.feed),
       events: new EventsModule(eventsApiFetcher, fetchOptions.events),
-      diaper: new DiaperModule(diaperApiFetcher, fetchOptions.diaper)
+      diaper: new DiaperModule(diaperApiFetcher, fetchOptions.diaper),
+      pump: new PumpModule(pumpApiFetcher, fetchOptions.pump)
     }
   };
 

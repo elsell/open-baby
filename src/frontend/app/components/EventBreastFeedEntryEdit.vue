@@ -11,7 +11,11 @@
         </div>
 
         <UFormField name="duration">
-          <USlider v-model="state.duration" size="xl" :min="0" :max="60" />
+          <USlider v-model="state.duration" size="xl" :min="0" :max="60"   :ui="{
+            track: 'h-9 rounded-sm',
+            range: 'rounded-sm rounded-r-none ',
+            thumb: 'h-9 w-2 rounded-sm'
+          }" />
         </UFormField>
       </div>
 
@@ -67,7 +71,6 @@
     <UButton size="xl" block type="submit" :loading="isLoading">
       {{ isEdit ? 'Edit Breast Feed' : 'Log Breast Feed' }}
     </UButton>
-    {{ state }}
   </UForm>
 </template>
 

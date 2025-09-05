@@ -17,7 +17,9 @@
           <EventBreastFeedEntryEdit v-else-if="eventStore.selectedEventToEdit === 'feed_breast'" :is-edit="isEdit"
             :event="eventStore.selectedBreastFeedEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
             @submit="onSubmit" />
-            {{ eventStore.selectedBreastFeedEventToEdit }}
+          <EventPumpEntryEdit v-else-if="eventStore.selectedEventToEdit === 'pump'" :is-edit="isEdit"
+            :event="eventStore.selectedPumpEventToEdit" class="flex-grow" @cancel="eventStore.clearEditState"
+            @submit="onSubmit" />
         </div>
       </template>
     </UDrawer>

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import type { IAPIDiaperChangeEvent } from '~~/repository/modules/diaper/types'
 import type { IAPIEventType } from '~~/repository/modules/events/types'
 import type { IAPIBottleFeedEvent, IAPIBreastFeedEvent } from '~~/repository/modules/feed/types'
+import type { IAPIPumpEvent } from '~~/repository/modules/pump/types'
 
 export const useEventStore = defineStore('eventStore', () => {
 
@@ -16,6 +17,7 @@ export const useEventStore = defineStore('eventStore', () => {
 
   const selectedDiaperChangeEventToEdit: Ref<IAPIDiaperChangeEvent | undefined> = ref()
 
+  const selectedPumpEventToEdit: Ref<IAPIPumpEvent | undefined> = ref()
 
 
   function GET_DEFAULT_FEED_EVENT(): IAPIBottleFeedEvent {
@@ -54,11 +56,22 @@ export const useEventStore = defineStore('eventStore', () => {
     }
   }
 
+  function GET_DEFAULT_PUMP_EVENT(): IAPIPumpEvent {
+    return {
+      id: "",
+      description: "",
+      name: "pump",
+      time_start: (new Date()).toISOString(),
+      amount_ml: 0,
+    }
+  }
+
   function clearEditState() {
     selectedEventToEdit.value = undefined
     selectedBottleFeedEventToEdit.value = undefined
     selectedDiaperChangeEventToEdit.value = undefined
     selectedBreastFeedEventToEdit.value = undefined
+    selectedPumpEventToEdit.value = undefined
     isEdit.value = false
   }
 
@@ -102,6 +115,16 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestDiaperEvent[0]
   }
 
+  async function getLatestPumpEvent(): Promise<IAPIPumpEvent | undefined> {
+    const { $api } = useNuxtApp()
+
+    const latestPumpEvent = await $api.events.pump.listEventPump(1, 0)
+
+    if (latestPumpEvent.length === 0) return undefined
+
+    return latestPumpEvent[0]
+  }
+
   async function getDefaultBottleFeedEventData(): Promise<IAPIBottleFeedEvent> {
     const latestEvent = await getLatestBottleFeedEvent()
 
@@ -126,6 +149,14 @@ export const useEventStore = defineStore('eventStore', () => {
     return latestEvent
   }
 
+  async function getDefaultPumpEventData(): Promise<IAPIPumpEvent> {
+    const latestEvent = await getLatestPumpEvent()
+
+    if (!latestEvent) return GET_DEFAULT_PUMP_EVENT()
+
+    return latestEvent
+  }
+
   async function getRecentlyUsedBottleFeedAmounts(): Promise<Array<number>> {
     const { $api } = useNuxtApp()
     const recentEvents = await $api.events.feed.listEventBottleFeed(50, 0)
@@ -142,13 +173,16 @@ export const useEventStore = defineStore('eventStore', () => {
     selectedDiaperChangeEventToEdit,
     selectedBottleFeedEventToEdit,
     selectedBreastFeedEventToEdit,
+    selectedPumpEventToEdit,
     isEdit,
     getLatestBottleFeedEvent,
     getDefaultBottleFeedEventData,
     getDefaultDiaperEventData,
     getDefaultBreastFeedEventData,
+    getDefaultPumpEventData,
     getLatestDiaperChangeEvent,
     getLatestBreastFeedEvent,
+    getLatestPumpEvent,
     clearEditState,
     getRecentlyUsedBottleFeedAmounts
   }

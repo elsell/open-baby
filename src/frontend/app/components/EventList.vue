@@ -34,7 +34,6 @@ const events: Array<{ name: string, icon: string, type: IAPIEventType, disabled?
     name: 'Pump',
     icon: 'i-healthicons-breast-pump',
     type: 'pump',
-    disabled: true
   },
 ]
 

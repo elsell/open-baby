@@ -48,6 +48,10 @@ async function onSelect(row: TableRow<IAPIEvent>, e?: Event) {
     const breastFeedEvent = await $api.events.feed.getEventBreastFeed(eventId)
     eventStore.selectedBreastFeedEventToEdit = breastFeedEvent
   }
+  else if (eventType === 'pump') {
+    const pumpEvent = await $api.events.pump.getEventPump(eventId)
+    eventStore.selectedPumpEventToEdit = pumpEvent
+  }
   else {
     throw new Error("Unknown event type. Ensure you're implementing it in history.vue");
   }
@@ -148,6 +152,26 @@ const columns: TableColumn<IAPIEvent>[] = [
 
         // Add icon
         const icon = 'i-mdi-mother-nurse'
+
+        return h('div', { style: "display: flex; flex-direction: row; align-items: center; flex-gap: 8px;" }, [
+          h(UIcon, { name: icon, class: 'text-2xl mr-2' }),
+          h('div', [
+            h('span', { style: 'text-transform: capitalize;' }, displayName),
+            h('br'),
+            h('span', { class: 'opacity-50 text-sm' }, `${durationMins} mins`)
+          ])
+        ])
+      }
+      else if (eventType === 'pump') {
+        displayName = 'Pump'
+
+        const timeStart = row.getValue("time_start") as string
+        const timeEnd = row.getValue("time_end") as string | undefined
+
+        const durationMins =  ( (timeEnd ? (new Date(timeEnd).getTime()): (new Date().getTime())) - new Date(timeStart).getTime()) / 60000
+
+        // Add icon
+        const icon = 'i-healthicons-breast-pump'
 
         return h('div', { style: "display: flex; flex-direction: row; align-items: center; flex-gap: 8px;" }, [
           h(UIcon, { name: icon, class: 'text-2xl mr-2' }),

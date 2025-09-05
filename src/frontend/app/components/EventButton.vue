@@ -17,8 +17,8 @@
       @click.prevent="handleClickLastEvent">
         <UIcon name="i-ph-clock-counter-clockwise" />
         <span class="flex flex-col items-start">
-          <span v-if="type==='feed_bottle' && lastEvent && 'amount_ml' in lastEvent" class="font-bold">
-            {{ lastEvent.amount_ml }} ml</span>
+          <span v-if="type==='feed_bottle' && lastEvent && 'amount_ml' in lastEvent && 'is_formula' in lastEvent" class="font-bold">
+            {{ lastEvent.amount_ml }} ml {{ lastEvent.is_formula ? 'formula' : 'breast milk' }}</span>
           <NuxtTime
 v-if="lastEvent" :datetime="lastEvent.time_start"
             :time-zone="Intl.DateTimeFormat().resolvedOptions().timeZone" relative />
@@ -31,6 +31,7 @@ v-if="lastEvent" :datetime="lastEvent.time_start"
 import type { IAPIDiaperChangeEvent } from '~~/repository/modules/diaper/types';
 import type { IAPIEventType } from '~~/repository/modules/events/types';
 import type { IAPIBottleFeedEvent, IAPIBreastFeedEvent } from '~~/repository/modules/feed/types';
+import type { IAPIPumpEvent } from '~~/repository/modules/pump/types';
 
 const props = defineProps<{
   name: string,
@@ -44,7 +45,7 @@ defineEmits<{
 
 const eventStore = useEventStore()
 
-const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | IAPIBreastFeedEvent | undefined> = ref()
+const lastEvent: Ref<IAPIBottleFeedEvent | IAPIDiaperChangeEvent | IAPIBreastFeedEvent | IAPIPumpEvent | undefined> = ref()
 
 const {$api} = useNuxtApp()
 
@@ -58,6 +59,9 @@ async function updateLastEvent() {
   }
   else if (props.type === 'feed_breast') {
     lastEvent.value = await eventStore.getLatestBreastFeedEvent()
+  }
+  else if (props.type === "pump") {
+    lastEvent.value = await eventStore.getLatestPumpEvent()
   }
   else {
     throw new Error(`Unknown event type "${props.type}". Please register in EventButton.vue`)
@@ -80,6 +84,10 @@ async function handleClickLastEvent() {
   else if(props.type === 'feed_breast' && lastEvent.value && 'id' in lastEvent.value) {
     eventStore.selectedBreastFeedEventToEdit = await $api.events.feed.getEventBreastFeed(lastEvent.value.id)
     eventStore.selectedEventToEdit = 'feed_breast'
+  }
+  else if(props.type === 'pump' && lastEvent.value && 'id' in lastEvent.value) {
+    eventStore.selectedPumpEventToEdit = await $api.events.pump.getEventPump(lastEvent.value.id)
+    eventStore.selectedEventToEdit = 'pump'
   }
   else {
     console.warn("No last event to edit")
