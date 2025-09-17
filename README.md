@@ -122,6 +122,26 @@ Open Baby supports logging diaper events with the following attributes:
 - Amount (Small, Medium, Large)
 
 
+### Statistics and Visualizations
+
+Open Baby includes the following statistics and visualizations, intended to
+help a parent communicate with a pediatrician and identify trends in their
+child's activity.
+
+- Stats (Shows a single number)
+    - Diapers/[Day/Week/Month]
+    - Bottle Feed vol/[Day/Week/Month]
+    - Pump vol/[Day/Week/Month]
+- Charts (Grouping by either hour, day, week, or month)
+    - Diaper Events Over Time
+    - Bottle Feed Volume Over Time
+    - Feeding Periodicity Over Time
+    - Feeding Periodicity Heatmap by Time of Day
+    
+
+All statistics and charts are linked, so selecting a group in a chart would update
+the stats to show data from that particular group (day/week/month).
+
 ## Technical Implementation
 
 Open Baby is comprised of two main components: the backend and the frontend.

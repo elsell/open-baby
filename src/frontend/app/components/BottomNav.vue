@@ -24,6 +24,11 @@ const pages = [
     slug: "/history",
     title: "History",
     icon: "i-ph-clock-counter-clockwise"
+  },
+  {
+    slug: "/stats",
+    title: "Stats",
+    icon: "i-ph-chart-bar"
   }
 ]
 
