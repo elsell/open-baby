@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from events.router import router as events_router
+from stats.router import router as stats_router
 from fastapi.middleware.cors import CORSMiddleware
 from config import config
 from structlog import get_logger
@@ -19,3 +20,4 @@ app.add_middleware(
 logger.info("CORS middleware configured", allow_origins=config.allow_origins)
 
 app.include_router(events_router, prefix="/events", tags=["events"])
+app.include_router(stats_router, prefix="/stats", tags=["stats"])
