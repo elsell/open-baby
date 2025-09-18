@@ -8,16 +8,12 @@
 <script setup lang="ts">
 import * as d3 from 'd3'
 import { ref, onMounted, onUnmounted, watch, nextTick, computed } from 'vue'
+import type { IAPIBottleFeedStatistic } from '~~/repository/modules/stats/types';
 
-/* Props */
-interface FeedData {
-  time: string
-  amount_ml: number
-  time_since_last_feed_minutes: number
-}
+
 
 const props = defineProps<{
-  feedData: FeedData[] | null | undefined
+  feedData: IAPIBottleFeedStatistic | null | undefined
   // accept a reactive "isDark" boolean (page passes useColorMode() computed)
   isDark?: boolean | null | undefined
 }>()
@@ -101,7 +97,7 @@ const renderChart = async () => {
 
   // interval color scale (map the actual extent -> interpolateTurbo)
   const intervalExtent = d3.extent(data, (d) => d.time_since_last_feed_minutes as number)
-  let intervalMin = intervalExtent[0] ?? 0
+  const intervalMin = intervalExtent[0] ?? 0
   let intervalMax = intervalExtent[1] ?? Math.max(1, intervalMin + 1)
   if (intervalMin === intervalMax) intervalMax = intervalMin + 1
   const intervalToColor = d3.scaleSequential(d3.interpolateTurbo).domain([intervalMin, intervalMax])
@@ -137,6 +133,8 @@ const renderChart = async () => {
   ]
 
   timeMarkers.forEach((marker) => {
+    if(!svg) return
+    
     svg
       .append('line')
       .attr('class', 'time-marker-line')
