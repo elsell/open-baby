@@ -8,7 +8,7 @@
         <div class="flex flex-row justify-between w-full">
           <label class="font-bold">Amount</label>
           <span class="opacity-80 flex flex-row ">
-            <input v-model="state.amountMl" type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline"  >
+            <input v-model="state.amountMl"  type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline" @focus="($event.target as HTMLInputElement).select()" @click="($event.target as HTMLInputElement).select()"  >
             <span>
             ml ({{ mlToOz(state.amountMl, 1) }}oz)
           </span>
@@ -36,7 +36,8 @@ v-model="state.amountMl" size="xl" :min="0" :max="200" :ui="{
         </div>
 
         <UFormField name="duration">
-          <USlider v-model="state.duration" size="xl" :min="0" :max="60" :ui="{
+          <USlider
+v-model="state.duration" size="xl" :min="0" :max="60" :ui="{
             track: 'h-9 rounded-sm',
             range: 'rounded-sm rounded-r-none ',
             thumb: 'h-9 w-2 rounded-sm'

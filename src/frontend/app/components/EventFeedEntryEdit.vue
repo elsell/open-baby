@@ -8,7 +8,7 @@
         <div class="flex flex-row justify-between w-full">
           <label class="font-bold">Amount</label>
           <span class="opacity-80 flex flex-row ">
-            <input v-model="state.amountMl" type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline"  >
+            <input v-model="state.amountMl" type="number" :min="0" :max="200" @focus="($event.target as HTMLInputElement).select()" @click="($event.target as HTMLInputElement).select()" class="[appearance:textfield] text-right decoration-dashed underline"  >
             <span>
             ml ({{ mlToOz(state.amountMl, 1) }}oz)
           </span>
