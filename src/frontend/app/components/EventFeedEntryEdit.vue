@@ -25,7 +25,7 @@ v-model="state.amountMl" size="xl" :min="0" :max="200" :ui="{
           }" />
           <!-- Preset Value Chips -->
           <div class="flex flex-row items-center gap-3">
-            <UButton v-for="amount in presetFeedAmountsMl" :key="amount" class="cursor-pointer" size="xs" color="neutral" variant="outline" @click="state.amountMl = amount" >
+            <UButton v-for="amount in presetFeedAmountsMl" :key="amount" class="cursor-pointer" size="lg" color="neutral" variant="outline" @click="state.amountMl = amount" >
               {{ amount }} ml
             </UButton>
           </div>
@@ -103,7 +103,7 @@ const props = withDefaults(defineProps<{
 const { $api } = useNuxtApp()
 const eventStore = useEventStore();
 
-const presetFeedAmountsMl: Array<number> = (await eventStore.getRecentlyUsedBottleFeedAmounts()).toReversed()
+const presetFeedAmountsMl: Array<number> = (await eventStore.getQuickSelectBottleFeedAmounts()).toReversed()
 
 const bottleFeedSchema = v.object({
   amountMl: v.pipe(v.number()),

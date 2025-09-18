@@ -168,6 +168,14 @@ export const useEventStore = defineStore('eventStore', () => {
     return Array.from(new Set(amounts)).slice(0, 5).toSorted((a: number, b: number) => b - a)
   }
 
+  async function getQuickSelectBottleFeedAmounts(): Promise<Array<number>> {
+    const recentlyUsed = await getRecentlyUsedBottleFeedAmounts()
+
+    const additionalDefaults = [30, 60, 90, 100].filter(amount => !recentlyUsed.includes(amount))
+
+    return [...recentlyUsed, ...additionalDefaults].toSorted((a, b) => b - a)
+  }
+
   return {
     selectedEventToEdit,
     selectedDiaperChangeEventToEdit,
@@ -184,6 +192,7 @@ export const useEventStore = defineStore('eventStore', () => {
     getLatestBreastFeedEvent,
     getLatestPumpEvent,
     clearEditState,
-    getRecentlyUsedBottleFeedAmounts
+    getRecentlyUsedBottleFeedAmounts,
+    getQuickSelectBottleFeedAmounts
   }
 })
