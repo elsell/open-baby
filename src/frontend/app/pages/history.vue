@@ -1,40 +1,88 @@
 <template>
   <div class="flex flex-col gap-4">
-    <!-- Page Header with Date Range Selector -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm p-4">
-      <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">History</h1>
-      <div class="flex flex-row gap-2">
-        <UButton
-          :variant="selectedWindow === 7 ? 'solid' : 'outline'"
-          :color="selectedWindow === 7 ? 'primary' : 'gray'"
-          size="sm"
-          @click="selectedWindow = 7"
-        >
-          Last 7 days
-        </UButton>
-        <UButton
-          :variant="selectedWindow === 30 ? 'solid' : 'outline'"
-          :color="selectedWindow === 30 ? 'primary' : 'gray'"
-          size="sm"
-          @click="selectedWindow = 30"
-        >
-          Last 30 days
-        </UButton>
-        <UButton
-          :variant="selectedWindow === null ? 'solid' : 'outline'"
-          :color="selectedWindow === null ? 'primary' : 'gray'"
-          size="sm"
-          @click="selectedWindow = null"
-        >
-          All
-        </UButton>
-      </div>
-    </div>
-
     <DiaperStatsWidget :days="selectedWindow" />
 
-    <UTable :column-visibility="{ id: false, metadata: false, time_end: false }" :data="data?.events" :columns="columns"
-      @select="onSelect" :loading="status === 'pending'" class="flex-1" />
+    <!-- Events Section -->
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm overflow-hidden">
+      <!-- Section Header with Tabs -->
+      <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-800">
+        <div class="flex flex-row items-center justify-between gap-3">
+          <!-- Tab-style Date Selector -->
+          <div class="flex flex-row gap-1">
+            <button
+              @click="selectedWindow = 7"
+              :class="[
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                selectedWindow === 7
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ]"
+            >
+              <span class="hidden sm:inline">Last 7 days</span>
+              <span class="sm:hidden">7 days</span>
+            </button>
+            <button
+              @click="selectedWindow = 30"
+              :class="[
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                selectedWindow === 30
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ]"
+            >
+              <span class="hidden sm:inline">Last 30 days</span>
+              <span class="sm:hidden">30 days</span>
+            </button>
+            <button
+              @click="selectedWindow = null"
+              :class="[
+                'px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
+                selectedWindow === null
+                  ? 'bg-blue-500 text-white'
+                  : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800'
+              ]"
+            >
+              All time
+            </button>
+          </div>
+
+          <!-- Event Count -->
+          <div v-if="status !== 'pending' && data?.events" class="text-sm text-gray-500 dark:text-gray-400">
+            <span v-if="data.events.length >= 10000" class="text-amber-600 dark:text-amber-500">
+              Showing first 10,000 events
+            </span>
+            <span v-else>
+              {{ data.events.length }} {{ data.events.length === 1 ? 'event' : 'events' }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Skeleton -->
+      <div v-if="status === 'pending'" class="p-8">
+        <div class="animate-pulse space-y-4">
+          <div class="h-12 bg-gray-200 dark:bg-gray-800 rounded"></div>
+          <div class="h-12 bg-gray-200 dark:bg-gray-800 rounded"></div>
+          <div class="h-12 bg-gray-200 dark:bg-gray-800 rounded"></div>
+          <div class="h-12 bg-gray-200 dark:bg-gray-800 rounded"></div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div v-else-if="!data?.events || data.events.length === 0" class="flex flex-col items-center justify-center py-16 px-4">
+        <UIcon name="i-lucide-calendar-off" class="text-6xl text-gray-300 dark:text-gray-700 mb-4" />
+        <h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">No Events Found</h3>
+        <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+          <span v-if="selectedWindow">No events logged in the last {{ selectedWindow }} days.</span>
+          <span v-else>No events have been logged yet.</span>
+        </p>
+      </div>
+
+      <!-- Events Table -->
+      <UTable v-else :column-visibility="{ id: false, metadata: false, time_end: false }" :data="data?.events" :columns="columns"
+        @select="onSelect" :loading="status === 'pending'" class="transition-opacity duration-200"
+        :class="{ 'opacity-50': status === 'pending' }" />
+    </div>
 
     <ConfirmDialog :open="showDialog" title="Delete Event" description="This action cannot be undone."
       confirm-text="Delete" cancel-text="Cancel" confirm-color="error" confirm-variant="solid"
