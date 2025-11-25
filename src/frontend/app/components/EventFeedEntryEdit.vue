@@ -19,7 +19,7 @@
 
         <UFormField name="amountMl">
           <div class="flex flex-col gap-2">
-            <USlider v-model="state.amountMl" size="xl" :min="0" :max="200" color="primary" :ui="{
+            <USlider v-model="state.amountMl" size="xl" :min="0" :max="300" color="primary" :ui="{
               track: 'h-9 rounded-sm',
               range: 'rounded-sm rounded-r-none ',
               thumb: 'h-9 w-2 rounded-sm'
