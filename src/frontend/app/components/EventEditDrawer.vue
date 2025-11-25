@@ -1,5 +1,5 @@
 <template>
-  <div data-vaul-drawer-wrapper class="h-full">
+  <div data-vaul-drawer-wrapper>
     <UDrawer v-model:open="showEventEntryDrawer" should-scale-background set-background-color-on-scale handle-only
       @close="eventStore.selectedEventToEdit = undefined">
       <template #content>
