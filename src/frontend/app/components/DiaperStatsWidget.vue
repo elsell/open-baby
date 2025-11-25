@@ -40,29 +40,27 @@
 
     <div v-else-if="stats" class="flex flex-col gap-4">
       <!-- At a Glance -->
-      <div class="flex flex-col gap-2">
+      <div class="flex flex-col gap-3">
         <div class="text-center">
-          <div class="text-4xl font-bold text-gray-800 dark:text-gray-100">
+          <div class="text-3xl font-bold text-gray-800 dark:text-gray-100">
             {{ Math.round(stats.avg_per_day) }}
           </div>
           <div class="text-sm text-gray-500 dark:text-gray-400">diapers per day</div>
         </div>
 
-        <div class="flex flex-row items-center justify-center gap-6 mt-2">
-          <div class="flex flex-row items-center gap-2">
-            <UIcon name="i-mdi-water" class="text-xl text-blue-500" />
-            <div class="flex flex-col">
-              <span class="text-2xl font-bold text-blue-500">{{ Math.round(stats.avg_wet_per_day) }}</span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">wet</span>
-            </div>
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Wet Card -->
+          <div class="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-900/50 rounded-lg p-3 flex flex-col items-center justify-center">
+            <UIcon name="i-mdi-water" class="text-2xl text-blue-500 mb-1" />
+            <div class="text-2xl font-bold text-blue-500">{{ Math.round(stats.avg_wet_per_day) }}</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">wet</div>
           </div>
 
-          <div class="flex flex-row items-center gap-2">
-            <UIcon name="i-mdi-circle-multiple" class="text-xl text-amber-500" />
-            <div class="flex flex-col">
-              <span class="text-2xl font-bold text-amber-500">{{ Math.round(stats.avg_poop_per_day) }}</span>
-              <span class="text-xs text-gray-500 dark:text-gray-400">poop</span>
-            </div>
+          <!-- Poop Card -->
+          <div class="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 rounded-lg p-3 flex flex-col items-center justify-center">
+            <UIcon name="i-mdi-circle-multiple" class="text-2xl text-amber-500 mb-1" />
+            <div class="text-2xl font-bold text-amber-500">{{ Math.round(stats.avg_poop_per_day) }}</div>
+            <div class="text-xs text-gray-600 dark:text-gray-400">poop</div>
           </div>
         </div>
       </div>
