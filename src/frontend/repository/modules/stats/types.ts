@@ -4,8 +4,11 @@ type IAPIResource = keyof paths
 
 type IAPIBottleFeedStatistic = paths['/stats/feeds']['get']['responses']['200']['content']['application/json']
 
+type IAPIDiaperStatistics = paths['/stats/diapers']['get']['responses']['200']['content']['application/json']
+
 
 export type {
     IAPIResource,
     IAPIBottleFeedStatistic,
+    IAPIDiaperStatistics,
 }

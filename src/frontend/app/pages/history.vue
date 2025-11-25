@@ -1,5 +1,7 @@
 <template>
   <div class="flex flex-col gap-1">
+    <DiaperStatsWidget class="mb-4" />
+
     <UTable :column-visibility="{ id: false, metadata: false, time_end: false }" :data="data?.events" :columns="columns"
       @select="onSelect" :loading="status === 'pending'" class="flex-1" />
 

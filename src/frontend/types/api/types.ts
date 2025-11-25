@@ -284,6 +284,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/stats/diapers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Diaper Statistics
+         * @description Retrieve comprehensive diaper statistics for a given time window.
+         */
+        get: operations["get_diaper_statistics_stats_diapers_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -351,6 +371,40 @@ export interface components {
             diaper_contents_color?: components["schemas"]["DiaperContentsColor"] | null;
             diaper_contents_consistency?: components["schemas"]["DiaperContentsConsistency"] | null;
             diaper_contents_size?: components["schemas"]["DiaperContentsSize"] | null;
+        };
+        /**
+         * DiaperStatistics
+         * @description Comprehensive diaper statistics for a given time window.
+         */
+        DiaperStatistics: {
+            /** Window Days */
+            window_days: number;
+            /** Total Diapers */
+            total_diapers: number;
+            /** Wet Only */
+            wet_only: number;
+            /** Poop Only */
+            poop_only: number;
+            /** Both */
+            both: number;
+            /** Avg Per Day */
+            avg_per_day: number;
+            /** Median Per Day */
+            median_per_day: number;
+            /** Avg Wet Per Day */
+            avg_wet_per_day: number;
+            /** Avg Poop Per Day */
+            avg_poop_per_day: number;
+            /** Days With Diapers */
+            days_with_diapers: number;
+            /** Avg Per Active Day */
+            avg_per_active_day: number;
+            /** Median Per Active Day */
+            median_per_active_day: number;
+            /** Min Per Day */
+            min_per_day: number;
+            /** Max Per Day */
+            max_per_day: number;
         };
         /**
          * DiaperType
@@ -1360,6 +1414,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BottleFeedStatistic"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_diaper_statistics_stats_diapers_get: {
+        parameters: {
+            query?: {
+                /** @description Number of days to include in the statistics window */
+                days?: number;
+                /** @description End date for the statistics window (defaults to now) */
+                end_date?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DiaperStatistics"];
                 };
             };
             /** @description Validation Error */

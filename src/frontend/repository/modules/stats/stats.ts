@@ -1,5 +1,5 @@
 import { HttpFactory } from '@@/repository/factory'
-import type { IAPIResource, IAPIBottleFeedStatistic } from './types';
+import type { IAPIResource, IAPIBottleFeedStatistic, IAPIDiaperStatistics } from './types';
 
 class StatsModule extends HttpFactory<IAPIResource> {
 
@@ -8,6 +8,15 @@ class StatsModule extends HttpFactory<IAPIResource> {
             params: {
                 start_date: start?.toISOString(),
                 end_date: end?.toISOString(),
+            }
+        })
+    }
+
+    async getDiaperStats(days: number, endDate?: Date): Promise<IAPIDiaperStatistics> {
+        return await this.call<IAPIDiaperStatistics>('GET', '/stats/diapers', undefined, {
+            params: {
+                days,
+                end_date: endDate?.toISOString(),
             }
         })
     }

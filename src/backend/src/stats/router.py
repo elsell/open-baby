@@ -28,3 +28,21 @@ def get_feed_statistic(
     """Retrieve a feed statistic by its ID."""
     service = StatsService(db=db)
     return service.get_feed_statistic(start_date=start_date, end_date=end_date)
+
+
+@router.get("/diapers", response_model=schemas.DiaperStatistics)
+def get_diaper_statistics(
+    days: int = Query(
+        7,
+        description="Number of days to include in the statistics window",
+        ge=1,
+    ),
+    end_date: Optional[AwareDatetime] = Query(
+        None,
+        description="End date for the statistics window (defaults to now)",
+    ),
+    db: Session = Depends(get_db),
+):
+    """Retrieve comprehensive diaper statistics for a given time window."""
+    service = StatsService(db=db)
+    return service.get_diaper_statistics(days=days, end_date=end_date)
