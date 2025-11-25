@@ -8,12 +8,23 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      apiBase: "https://192.168.1.204/api"
+      apiBase: "http://192.168.1.204:8000"
     }
   },
 
   telemetry: {
     enabled: false
+  },
+
+  colorMode: {
+    preference: 'system',
+    fallback: 'light'
+  },
+
+  ui: {
+    theme: {
+      colors: ['primary', 'secondary', 'success', 'info', 'warning', 'error']
+    }
   },
 
   ssr: false,

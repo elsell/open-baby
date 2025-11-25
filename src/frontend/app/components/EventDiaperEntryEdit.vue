@@ -7,11 +7,11 @@
                 <div class="flex flex-col gap-3">
 
 
-                    <label class="font-bold">Diaper Type</label>
+                    <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Diaper Type</label>
 
                     <URadioGroup
 v-model="state.diaper_type" size="xl" variant="card" :items="diaperTypeItems"
-                        orientation="horizontal" indicator="hidden" :ui="{
+                        orientation="horizontal" indicator="hidden" color="primary" :ui="{
                             fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
                             item: 'flex-grow'
                         }">
@@ -30,11 +30,11 @@ v-model="state.diaper_type" size="xl" variant="card" :items="diaperTypeItems"
             <!-- Size -->
             <UFormField name="size">
                 <div class="flex flex-col gap-3">
-                    <label class="font-bold">Size</label>
+                    <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Size</label>
 
                     <URadioGroup
 v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSizeItems"
-                        orientation="horizontal" indicator="hidden" :ui="{
+                        orientation="horizontal" indicator="hidden" color="primary" :ui="{
                             fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
                             item: 'flex-grow'
                         }">
@@ -52,14 +52,14 @@ v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSize
             <div class="flex flex-row gap-5">
                 <UFormField name="date">
                     <div class="flex flex-col gap-3">
-                        <label class="font-bold">Date</label>
+                        <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Date</label>
 
                         <UInput v-model="state.date" size="xl" type="date" />
                     </div>
                 </UFormField>
                 <UFormField name="time">
                     <div class="flex flex-col gap-3">
-                        <label class="font-bold">Time</label>
+                        <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Time</label>
 
                         <UInput v-model="state.time" size="xl" type="time" :default-value="state.time" />
                     </div>
@@ -73,13 +73,13 @@ v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSize
                         <!-- Color -->
                         <UFormField name="color">
                             <div class="flex flex-col gap-3">
-                                <label class="font-bold">Color</label>
+                                <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Color</label>
 
                                 <!-- A radio button-based selector for the diaper color, colored for easily
                                     selection by tired parents. -->
                                 <URadioGroup
                                     v-model="state.diaper_contents_color" :items="diaperColorItems"
-                                    orientation="horizontal" variant="card" indicator="hidden" :ui="{
+                                    orientation="horizontal" variant="card" indicator="hidden" color="primary" :ui="{
                                         fieldset: 'flex flex-col sm:flex-row flex-wrap gap-2 sm:items-center justify-between md:justify-start w-full',
                                         item: 'flex-grow'
                                     }">
@@ -99,10 +99,10 @@ v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSize
                         <!-- Consistency, Enum-based with icons for ease of selection-->
                         <UFormField name="consistency">
                             <div class="flex flex-col gap-3">
-                                <label class="font-bold">Consistency</label>
+                                <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Consistency</label>
                                 <URadioGroup
                                     v-model="state.diaper_contents_consistency" :items="diaperConsistencyItems"
-                                    orientation="horizontal" variant="card" indicator="hidden" :ui="{
+                                    orientation="horizontal" variant="card" indicator="hidden" color="primary" :ui="{
                                         fieldset: 'flex flex-row flex-wrap items-center justify-between md:justify-start w-full',
                                         item: 'flex-grow'
                                     }">
@@ -121,7 +121,7 @@ v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSize
                         <!-- Notes -->
                         <UFormField name="notes">
                             <div class="flex flex-col gap-3">
-                                <label class="font-bold">Notes</label>
+                                <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Notes</label>
                                 <UTextarea v-model="state.notes" placeholder="Add any additional notes here..." />
                             </div>
                         </UFormField>
@@ -129,7 +129,7 @@ v-model="state.diaper_contents_size" size="xl" variant="card" :items="diaperSize
                 </template>
             </UAccordion>
         </div>
-        <UButton size="xl" block type="submit" :loading="isLoading">
+        <UButton size="xl" block type="submit" :loading="isLoading" color="primary">
             {{ isEdit ? 'Edit Diaper' : 'Log Diaper' }}
         </UButton>
     </UForm>

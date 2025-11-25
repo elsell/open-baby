@@ -102,11 +102,11 @@ const filteredData = computed<FeedData[]>(() => {
 
 <style scoped>
 .page-container {
-  --bg: #ffffff;
-  --text: #111827;
-  --muted: #6b7280;
+  --bg: #fafafa;
+  --text: #262626;
+  --muted: #737373;
   --select-bg: #ffffff;
-  --select-border: #d1d5db;
+  --select-border: #e5e5e5;
   --tooltip-bg: rgba(45, 45, 45, 0.9);
   --tooltip-text: #ffffff;
 
@@ -122,11 +122,11 @@ const filteredData = computed<FeedData[]>(() => {
 
 /* dark theme variables */
 .page-container.dark {
-  --bg: #0f172a;
-  --text: #e6eef8;
-  --muted: #94a3b8;
-  --select-bg: #0b1220;
-  --select-border: #1f2a44;
+  --bg: #0a0a0a;
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --select-bg: #171717;
+  --select-border: #262626;
   --tooltip-bg: rgba(0, 0, 0, 0.75);
   --tooltip-text: #f8fafc;
 }

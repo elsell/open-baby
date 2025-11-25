@@ -6,12 +6,12 @@
       <!-- Duration -->
       <div class="flex flex-col  gap-3">
         <div class="flex flex-row justify-between w-full">
-          <label class="font-bold">Duration</label>
-          <span class="opacity-80">{{ state.duration }} minutes</span>
+          <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Duration</label>
+          <span class="text-gray-600 dark:text-gray-400">{{ state.duration }} minutes</span>
         </div>
 
         <UFormField name="duration">
-          <USlider v-model="state.duration" size="xl" :min="0" :max="60"   :ui="{
+          <USlider v-model="state.duration" size="xl" :min="0" :max="60" color="primary" :ui="{
             track: 'h-9 rounded-sm',
             range: 'rounded-sm rounded-r-none ',
             thumb: 'h-9 w-2 rounded-sm'
@@ -23,14 +23,14 @@
       <div class="flex flex-row gap-5">
         <UFormField name="date">
           <div class="flex flex-col gap-3">
-            <label class="font-bold">Date</label>
+            <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Date</label>
 
             <UInput v-model="state.date" size="xl" type="date" />
           </div>
         </UFormField>
         <UFormField name="time">
           <div class="flex flex-col gap-3">
-            <label class="font-bold">Time</label>
+            <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Time</label>
 
             <UInput v-model="state.time" size="xl" type="time" :default-value="state.time" />
           </div>
@@ -43,10 +43,10 @@
         <div class="flex flex-col gap-3">
 
 
-          <label class="font-bold">Side</label>
+          <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Side</label>
 
           <URadioGroup v-model="state.side" size="xl" variant="card" :items="breastFeedSideItems"
-            orientation="horizontal" indicator="hidden" :ui="{
+            orientation="horizontal" indicator="hidden" color="primary" :ui="{
               fieldset: 'flex flex-row items-center justify-between md:justify-start w-full',
               item: 'flex-grow'
             }">
@@ -61,14 +61,14 @@
           <!-- Notes -->
           <UFormField name="notes">
             <div class="flex flex-col gap-3">
-              <label class="font-bold">Notes</label>
+              <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Notes</label>
               <UTextarea v-model="state.notes" placeholder="Add any additional notes here..." />
             </div>
           </UFormField>
         </div>
       </UFormField>
     </div>
-    <UButton size="xl" block type="submit" :loading="isLoading">
+    <UButton size="xl" block type="submit" :loading="isLoading" color="primary">
       {{ isEdit ? 'Edit Breast Feed' : 'Log Breast Feed' }}
     </UButton>
   </UForm>

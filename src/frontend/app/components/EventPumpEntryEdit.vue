@@ -6,9 +6,9 @@
       <!-- Amount -->
       <div class="flex flex-col  gap-3">
         <div class="flex flex-row justify-between w-full">
-          <label class="font-bold">Amount</label>
-          <span class="opacity-80 flex flex-row ">
-            <input v-model="state.amountMl"  type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline" @focus="($event.target as HTMLInputElement).select()" @click="($event.target as HTMLInputElement).select()"  >
+          <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Amount</label>
+          <span class="text-gray-600 dark:text-gray-400 flex flex-row ">
+            <input v-model="state.amountMl"  type="number" :min="0" :max="200" class="[appearance:textfield] text-right decoration-dashed underline bg-transparent" @focus="($event.target as HTMLInputElement).select()" @click="($event.target as HTMLInputElement).select()"  >
             <span>
             ml ({{ mlToOz(state.amountMl, 1) }}oz)
           </span>
@@ -20,7 +20,7 @@
 
         <UFormField name="amountMl">
           <USlider
-v-model="state.amountMl" size="xl" :min="0" :max="200" :ui="{
+v-model="state.amountMl" size="xl" :min="0" :max="200" color="primary" :ui="{
             track: 'h-9 rounded-sm',
             range: 'rounded-sm rounded-r-none ',
             thumb: 'h-9 w-2 rounded-sm'
@@ -31,13 +31,13 @@ v-model="state.amountMl" size="xl" :min="0" :max="200" :ui="{
           <!-- Duration -->
       <div class="flex flex-col  gap-3">
         <div class="flex flex-row justify-between w-full">
-          <label class="font-bold">Duration</label>
-          <span class="opacity-80">{{ state.duration }} minutes</span>
+          <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Duration</label>
+          <span class="text-gray-600 dark:text-gray-400">{{ state.duration }} minutes</span>
         </div>
 
         <UFormField name="duration">
           <USlider
-v-model="state.duration" size="xl" :min="0" :max="60" :ui="{
+v-model="state.duration" size="xl" :min="0" :max="60" color="primary" :ui="{
             track: 'h-9 rounded-sm',
             range: 'rounded-sm rounded-r-none ',
             thumb: 'h-9 w-2 rounded-sm'
@@ -49,21 +49,21 @@ v-model="state.duration" size="xl" :min="0" :max="60" :ui="{
       <div class="flex flex-row gap-5">
         <UFormField name="date">
           <div class="flex flex-col gap-3">
-            <label class="font-bold">Date</label>
+            <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Date</label>
 
             <UInput v-model="state.date" size="xl" type="date" />
           </div>
         </UFormField>
         <UFormField name="time">
           <div class="flex flex-col gap-3">
-            <label class="font-bold">Time</label>
+            <label class="font-semibold text-base text-gray-700 dark:text-gray-200">Time</label>
 
             <UInput v-model="state.time" size="xl" type="time" :default-value="state.time" />
           </div>
         </UFormField>
       </div>
     </div>
-    <UButton size="xl" block type="submit" :loading="isLoading">
+    <UButton size="xl" block type="submit" :loading="isLoading" color="primary">
       {{ isEdit ? 'Edit Pump' : 'Log Pump' }}
     </UButton>
   </UForm>
