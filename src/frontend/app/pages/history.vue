@@ -1,6 +1,37 @@
 <template>
-  <div class="flex flex-col gap-1">
-    <DiaperStatsWidget class="mb-4" />
+  <div class="flex flex-col gap-4">
+    <!-- Page Header with Date Range Selector -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm p-4">
+      <h1 class="text-xl font-semibold text-gray-800 dark:text-gray-100">History</h1>
+      <div class="flex flex-row gap-2">
+        <UButton
+          :variant="selectedWindow === 7 ? 'solid' : 'outline'"
+          :color="selectedWindow === 7 ? 'primary' : 'gray'"
+          size="sm"
+          @click="selectedWindow = 7"
+        >
+          Last 7 days
+        </UButton>
+        <UButton
+          :variant="selectedWindow === 30 ? 'solid' : 'outline'"
+          :color="selectedWindow === 30 ? 'primary' : 'gray'"
+          size="sm"
+          @click="selectedWindow = 30"
+        >
+          Last 30 days
+        </UButton>
+        <UButton
+          :variant="selectedWindow === null ? 'solid' : 'outline'"
+          :color="selectedWindow === null ? 'primary' : 'gray'"
+          size="sm"
+          @click="selectedWindow = null"
+        >
+          All
+        </UButton>
+      </div>
+    </div>
+
+    <DiaperStatsWidget :days="selectedWindow" />
 
     <UTable :column-visibility="{ id: false, metadata: false, time_end: false }" :data="data?.events" :columns="columns"
       @select="onSelect" :loading="status === 'pending'" class="flex-1" />
@@ -27,9 +58,29 @@ const UDropdownMenu = resolveComponent('UDropdownMenu')
 
 const eventStore = useEventStore()
 
+// Date range selector state
+const selectedWindow = ref<number | null>(30)
+
+// Calculate date range based on selected window
+const getDateRange = () => {
+  if (selectedWindow.value === null) {
+    return { start_time: undefined, end_time: undefined }
+  }
+  const endTime = new Date()
+  const startTime = new Date()
+  startTime.setDate(startTime.getDate() - selectedWindow.value)
+  return { start_time: startTime.toISOString(), end_time: endTime.toISOString() }
+}
+
 const { data, status, refresh } = await useAsyncData(
   'event-list',
-  async () => await $api.events.events.listEvents(10000)
+  async () => {
+    const { start_time, end_time } = getDateRange()
+    return await $api.events.events.listEvents(10000, 0, start_time, end_time)
+  },
+  {
+    watch: [selectedWindow]
+  }
 )
 async function onSelect(row: TableRow<IAPIEvent>, e?: Event) {
   const eventType: IAPIEventType = row.getValue('name')

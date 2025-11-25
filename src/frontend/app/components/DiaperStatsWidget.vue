@@ -1,34 +1,6 @@
 <template>
   <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm p-4">
-    <div class="flex flex-row items-center justify-between mb-4">
-      <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Diaper Summary</h2>
-      <div class="flex flex-row gap-2">
-        <UButton
-          :variant="selectedWindow === 7 ? 'solid' : 'outline'"
-          :color="selectedWindow === 7 ? 'primary' : 'gray'"
-          size="xs"
-          @click="selectedWindow = 7"
-        >
-          7d
-        </UButton>
-        <UButton
-          :variant="selectedWindow === 30 ? 'solid' : 'outline'"
-          :color="selectedWindow === 30 ? 'primary' : 'gray'"
-          size="xs"
-          @click="selectedWindow = 30"
-        >
-          30d
-        </UButton>
-        <UButton
-          :variant="selectedWindow === 365 ? 'solid' : 'outline'"
-          :color="selectedWindow === 365 ? 'primary' : 'gray'"
-          size="xs"
-          @click="selectedWindow = 365"
-        >
-          All
-        </UButton>
-      </div>
-    </div>
+    <h2 class="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">Diaper Summary</h2>
 
     <div v-if="pending" class="text-center py-8 text-gray-500 dark:text-gray-400">
       Loading...
@@ -129,16 +101,19 @@
 <script lang="ts" setup>
 import type { IAPIDiaperStatistics } from '~~/repository/modules/stats/types'
 
+const props = defineProps<{
+  days: number | null
+}>()
+
 const { $api } = useNuxtApp()
 
-const selectedWindow = ref(7)
 const showDetails = ref(false)
 
 const { data: stats, pending, error, refresh } = await useAsyncData(
   'diaper-stats',
-  async () => await $api.stats.getDiaperStats(selectedWindow.value),
+  async () => await $api.stats.getDiaperStats(props.days ?? 365),
   {
-    watch: [selectedWindow]
+    watch: [() => props.days]
   }
 )
 </script>
